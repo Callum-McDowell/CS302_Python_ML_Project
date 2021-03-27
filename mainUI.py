@@ -13,12 +13,6 @@ import os;
 MODULE_DIR = os.path.dirname(os.path.realpath(__file__));
 RESOURCES_DIR = MODULE_DIR + "\\resources\\";
 
-# If this module is run as main, execute the below:
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    appwin = AppMainWindow()
-    sys.exit(app.exec_())
-
 
 
 #====== Window Setup ======#
@@ -179,3 +173,10 @@ class PopupBox(QWidget):
 
     def exitPopup(self):
         self.close();
+
+
+# If this module is run as main, execute the below:
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    appwin = AppMainWindow()
+    sys.exit(app.exec_())
