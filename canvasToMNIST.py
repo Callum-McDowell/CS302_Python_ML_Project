@@ -1,3 +1,16 @@
+import PIL, torch, torchvision
+from PIL import Image
+import torch.nn as nn
+import torch.nn.functional as F
+from torchvision import transforms
+import numpy as np
+from skimage import color
+from skimage import io
+import cv2
+from PIL import Image, ImageFilter
+import math
+import scipy.ndimage as ndimage
+
 #Get the centre of mass in the image (So we can centre the number)
 def getShiftCoords(img):
     cy,cx = ndimage.measurements.center_of_mass(img)
