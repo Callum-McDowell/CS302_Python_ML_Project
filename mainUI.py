@@ -14,7 +14,7 @@
 import sys;
 from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QMainWindow;
 from PyQt5.QtWidgets import QMenuBar, QToolBar, QStatusBar, QAction;
-from PyQt5.QtWidgets import QTextBrowser, QPushButton, QVBoxLayout;
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QInputDialog;
 from PyQt5.QtGui import QIcon;
 #from PyQt5.QtCore import Qt;
 
@@ -73,6 +73,7 @@ class AppMainWindow(QMainWindow):
         self.openAction.setToolTip("Select new training images");
         self.openAction.setStatusTip("Select new training images");
         self.openAction.setShortcut("Ctrl+O");
+        self.openAction.triggered.connect(self.importDataset);
         # Help 
         self.helpAction = QAction("Help", self);
         self.helpAction.setIcon(QIcon(r.ICON_HELP));
@@ -127,13 +128,23 @@ class AppMainWindow(QMainWindow):
         return self.statusbar;
 
     def helpDialogue(self):
-        self.popup = peripheralUI.PopupBox();
+        self.popup = peripheralUI.PopupBox("Help", r.ICON_HELP);
         self.popup.assignText("<b>Icon credit to:</b>");
         self.popup.assignText('Icons made by <a href="https://www.freepik.com">Freepik</a> from <a href="https://www.flaticon.com/">www.flaticon.com</a>.');
         self.popup.assignText('Icons made by <a href="https://iconmonstr.com">iconmonstr</a>.');
 
+    def importDataset(self):
+        file_dir_array = QFileDialog.getOpenFileNames(self, "Open file", "./");
+        # Send this data to validation (are pics correct format? accessible?)
+        # Generate error warnings for invalid entries
+        # Then save valid dirs to TensorFlow NN dataset reference
+
     def exitApp(self):
-        self.close();
+        confirm = QMessageBox.question(self, "Warning", "Are you sure you want to quit?",
+                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No);
+        if (confirm == QMessageBox.Yes):
+          self.close();
+
 
 
 # If this module is run as main, execute the below:

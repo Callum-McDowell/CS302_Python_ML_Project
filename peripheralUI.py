@@ -22,12 +22,13 @@ class PopupBox(QWidget):
     # Text box that pops up in a new windows.
     # Useful for displaying reports and detailed information.
     
-    def __init__(self):
+    def __init__(self, title="Popup Box", icon=None):
         super().__init__();
-        self.initPopup();
+        self.initPopup(title, icon);
 
-    def initPopup(self):
-        self.setWindowTitle("Popup Box");
+    def initPopup(self, title, icon):
+        self.setWindowTitle(title);
+        self.setWindowIcon(QIcon(icon));
         self.setGeometry(400, 300, 400, 400);
         
         self.button = QPushButton("Close", self);
