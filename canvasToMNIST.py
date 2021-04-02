@@ -1,23 +1,23 @@
 #Get the centre of mass in the image (So we can centre the number)
-def getBestShift(img):
+def getShiftCoords(img):
     cy,cx = ndimage.measurements.center_of_mass(img)
 
     rows,cols = img.shape
-    shiftx = np.round(cols/2.0-cx).astype(int)
-    shifty = np.round(rows/2.0-cy).astype(int)
+    xshift = np.round(cols/2.0-cx).astype(int)
+    yshift = np.round(rows/2.0-cy).astype(int)
 
-    return shiftx,shifty
+    return xshift, yshift
 
 #Shift the number to the centre
-def shift(img,sx,sy):
+def shift(img,xshift,yshift):
     rows,cols = img.shape
-    M = np.float32([[1,0,sx],[0,1,sy]])
-    shifted = cv2.warpAffine(img,M,(cols,rows))
+    matrix = np.float32([[1,0,xshift],[0,1,yshift]])
+    shifted = cv2.warpAffine(img,matrix,(cols,rows)) #Transforming the image to the centre
     return shifted
 
 #Remove excess whitespace
 def cropInput(img):
-    #Invert image (Black background and white number)
+    #Since it's easier to find non-zero coordinates in Opencv , we invert the image first (black becomes white and vice versa)
     img = 255*(img < 128).astype(np.uint8) 
 
     coords = cv2.findNonZero(img) # Find all non-zero points (number)
@@ -46,6 +46,6 @@ def convertToMNIST(img):
     img = np.lib.pad(img,(rowsPadding,colsPadding),'constant')
 
     #Shifting it towards the centre of mass
-    shiftx,shifty = getBestShift(img)
-    shifted = shift(img,shiftx,shifty)
+    xshift, yshift = getShiftCoords(img)
+    shifted = shift(img,xshift,yshift)
     return shifted
