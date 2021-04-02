@@ -30,7 +30,7 @@ def shift(img,xshift,yshift):
 
 #Remove excess whitespace
 def cropInput(img):
-    #Since it's easier to find non-zero coordinates in Opencv , we invert the image first (black becomes white and vice versa)
+    #Invert image (black background and white number)
     img = 255*(img < 128).astype(np.uint8) 
 
     coords = cv2.findNonZero(img) # Find all non-zero points (number)
