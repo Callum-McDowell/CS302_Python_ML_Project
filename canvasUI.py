@@ -32,13 +32,11 @@ class Window(QMainWindow):
 
         #Clear button
         clearButton = QPushButton('Clear', self)
-        clearButton.setToolTip('This is an example button')
         clearButton.move(100,500)
         clearButton.clicked.connect(self.clear)
     
         #Submit button
         submitButton = QPushButton('Submit', self)
-        submitButton.setToolTip('This is an example button')
         submitButton.move(200,500)
         submitButton.clicked.connect(self.submit)
   
