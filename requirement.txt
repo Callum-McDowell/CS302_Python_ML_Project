@@ -4,7 +4,7 @@ Our required libraries:
 - PyQt5 Python GUI (v5.15.4)
 - PyTorch for DNN (v1.8)
 - scikit-image (v0.18.1)
-
+- mkl-service (v2.3.0)
 
 
 Dataset can vary, but we are using the MNIST Dataset.
