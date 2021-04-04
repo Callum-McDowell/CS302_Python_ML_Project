@@ -48,7 +48,7 @@ def convertToMNIST(img):
     #Add padding as entire image needs to be 28X28 
     colsPadding = (int(math.ceil((28-cols)/2.0)),int(math.floor((28-cols)/2.0)))
     rowsPadding = (int(math.ceil((28-rows)/2.0)),int(math.floor((28-rows)/2.0)))
-    img = np.lib.pad(img,(rowsPadding,colsPadding),'constant')
+    img = np.pad(img,(rowsPadding,colsPadding),'constant')
 
     #Shifting it towards the centre of mass
     xshift, yshift = getShiftCoords(img)
