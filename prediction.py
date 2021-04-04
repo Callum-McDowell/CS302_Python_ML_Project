@@ -49,7 +49,7 @@ def predict(img):
     output = model(trans(img))
     pred = output.data.max(1, keepdim=True)[1]
 
-    #Since the output can have some negative
+    #Getting the relative probability of the predictions
     relative_probability = output[0].tolist()
     if min(relative_probability) < 0:
         for value in relative_probability:
