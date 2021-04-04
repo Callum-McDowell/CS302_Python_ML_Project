@@ -1,13 +1,5 @@
-import PIL, torch, torchvision
-from PIL import Image
-import torch.nn as nn
-import torch.nn.functional as F
-from torchvision import transforms
 import numpy as np
-from skimage import color
-from skimage import io
 import cv2
-from PIL import Image, ImageFilter
 import math
 import scipy.ndimage as ndimage
 
@@ -30,8 +22,8 @@ def shift(img,xshift,yshift):
 
 #Remove excess whitespace
 def cropInput(img):
-    #Invert image (black background and white number)
-    img = 255*(img < 128).astype(np.uint8) 
+    #Invert image so that the input digit is white and the background is black (like the MNIST dataset)
+    img = 255-img 
 
     coords = cv2.findNonZero(img) # Find all non-zero points (number)
     x, y, w, h = cv2.boundingRect(coords) # Find minimum spanning bounding box
