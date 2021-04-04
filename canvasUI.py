@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import * 
 import sys
 import canvasToMNIST
+import prediction
 import cv2
 import os
   
@@ -43,11 +44,11 @@ class Window(QMainWindow):
     #This method checks for mouse clicks
     def mousePressEvent(self, event):
   
-        # if left mouse button is pressed
+        #Check if left mouse button is pressed
         if event.button() == Qt.LeftButton:
-            # make drawing flag true
+            #Make drawing flag true
             self.drawing = True
-            # make last point to the point of cursor
+            #Make the last point at the mouse cursor position
             self.lastPoint = event.pos()
   
     #This method tracks mouse activity
@@ -105,7 +106,9 @@ class Window(QMainWindow):
         img = canvasToMNIST.cropInput(img)
         img = canvasToMNIST.convertToMNIST(img)
 
-        #Display result here
+        #Displaying result
+        prediction.predict(img)
+
   
 #Create pyqt5 app
 App = QApplication(sys.argv)
