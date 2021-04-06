@@ -1,5 +1,3 @@
-# Callum - 2nd April 2021
-
 #====== maincUI.py ======#
 # The core content and 'central widget' of our app.
 #

@@ -1,5 +1,3 @@
-# Callum - 29th March 2021
-
 #====== mainUI.py ======#
 # The MainWindow of our app.
 # The MainWindow provides a framework for the UI, with our QToolBar,
@@ -12,9 +10,7 @@
 
 #====== Libraries ======#
 import sys;
-from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QMainWindow;
-from PyQt5.QtWidgets import QMenuBar, QToolBar, QStatusBar, QAction;
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QInputDialog;
+from PyQt5.QtWidgets import *;
 from PyQt5.QtGui import QIcon;
 #from PyQt5.QtCore import Qt;
 
@@ -26,7 +22,6 @@ import peripheralUI;
 
 #====== Window Setup ======#
 # See here for full guide: https://realpython.com/python-menus-toolbars/
-
 class AppMainWindow(QMainWindow):
 
     def __init__(self):
@@ -67,13 +62,11 @@ class AppMainWindow(QMainWindow):
         self.exitAction.setIcon(QIcon(r.ICON_EXIT));
         self.exitAction.setShortcut("Ctrl+E");
         self.exitAction.triggered.connect(self.exitApp);
-        # Open
-        self.openAction = QAction("&Open", self);
-        self.openAction.setIcon(QIcon(r.ICON_OPEN));
-        self.openAction.setToolTip("Select new training images");
-        self.openAction.setStatusTip("Select new training images");
-        self.openAction.setShortcut("Ctrl+O");
-        self.openAction.triggered.connect(self.importDataset);
+        # Train Model
+        self.trainModel = QAction("&Train Model", self);
+        self.trainModel.setToolTip("Train handwriting recognition model");
+        self.trainModel.setStatusTip("Train handwriting recognition model");
+        self.trainModel.triggered.connect(self.modelTraining);
         # Help 
         self.helpAction = QAction("Help", self);
         self.helpAction.setIcon(QIcon(r.ICON_HELP));
@@ -96,7 +89,7 @@ class AppMainWindow(QMainWindow):
         self.menubar = self.menuBar();
 
         self.fileMenu = self.menubar.addMenu("&File");
-        self.fileMenu.addAction(self.openAction);
+        self.fileMenu.addAction(self.trainModel);
         self.fileMenu.addAction(self.helpAction);
         self.fileMenu.addSeparator();
         self.fileMenu.addAction(self.exitAction);
@@ -112,7 +105,6 @@ class AppMainWindow(QMainWindow):
 
     def initMainToolBar(self):
         self.toolbar = self.addToolBar("Main Tools");
-        self.toolbar.addAction(self.openAction);
         self.toolbar.addSeparator();
         self.toolbar.addAction(self.drawAction);
 
@@ -133,11 +125,9 @@ class AppMainWindow(QMainWindow):
         self.popup.assignText('Icons made by <a href="https://www.freepik.com">Freepik</a> from <a href="https://www.flaticon.com/">www.flaticon.com</a>.');
         self.popup.assignText('Icons made by <a href="https://iconmonstr.com">iconmonstr</a>.');
 
-    def importDataset(self):
-        file_dir_array = QFileDialog.getOpenFileNames(self, "Open file", "./");
-        # Send this data to validation (are pics correct format? accessible?)
-        # Generate error warnings for invalid entries
-        # Then save valid dirs to TensorFlow NN dataset reference
+    def modelTraining(self):
+        dlg = peripheralUI.createModelDialog()
+        dlg.exec_()
 
     def exitApp(self):
         confirm = QMessageBox.question(self, "Warning", "Are you sure you want to quit?",
