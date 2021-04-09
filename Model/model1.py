@@ -62,15 +62,25 @@ class Model(nn.Module):
         super(Model, self).__init__();
         self.Flatten = nn.Flatten();    # Convert images from 2D to 1D array
 
+        l1 = 25*25;
+        l2 = 22*22;
+        l3 = 18*18;
+        l4 = 13*13;
+        l5 = 4*4;
+
         self.linear_relu_stack = nn.Sequential(
             # 6 layer stack
             # linear downscaling in data size
             # ReLu to identify non-linear behaviour for closer fitting
-            nn.Linear(28*28, 21*21),
+            nn.Linear(28*28, l1),
             nn.ReLU(),
-            nn.Linear(21*21, 14*14),
+            nn.Linear(l1, l2),
             nn.ReLU(),
-            nn.Linear(14*14, 16),
+            nn.Linear(l2, l3),
+            nn.ReLU(),
+            nn.Linear(l3, l4),
+            nn.ReLU(),
+            nn.Linear(l4, l5),
             nn.ReLU(),
         )
 
@@ -128,6 +138,9 @@ def test(dataloader, model, loss_fn):
 
 
 #====== Run Model ======#
+import time;
+t0 = time.perf_counter();
+
 for i in range(number_of_epochs):
     print(f"Epoch {i+1}\n----------------------------")
     train(loader_trainset, net, loss_fn, optimiser);
@@ -138,6 +151,8 @@ torch.save(net, "Model/saves/model1.pth");
 torch.save(optimiser.state_dict(), "Model/saves/model1_optimiser.pth");
 torch.save(net.state_dict(), "Model/saves/model1_weights.pth");
 
+t1 = time.perf_counter();
+print(f"Finished in {(t1 - t0):>.2f}s.");
 print("FIN.")
 
 #accuracy=77.2% at lr=1e-2, batch=64, epoch=10
