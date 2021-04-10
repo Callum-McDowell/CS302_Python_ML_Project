@@ -30,12 +30,13 @@ class AppMainWindow(QMainWindow):
 
     def initUI(self):
         # Defines
-        WINDOW_SIZE_X = 800;
-        WINDOW_SIZE_Y = 600;
+        WINDOW_SIZE_X = 600;
+        WINDOW_SIZE_Y = 400;
         WINDOW_TITLE = "CNN Handwriting Recogniser";
+        self.layout = QVBoxLayout
         # Code
         self.setWindowTitle(WINDOW_TITLE);
-        self.resize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+        self.setFixedSize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
         self.setWindowIcon(QIcon(r.ICON_WINDOW));
         self.centreWindow();
         # Core Components
@@ -43,9 +44,6 @@ class AppMainWindow(QMainWindow):
         self.menubar = self.initMenuBar();
         self.toolbar = self.initMainToolBar();
         self.statusbar = self.initStatusBar();
-        # Central Widget
-        main_content = c.AppMainContent();
-        self.setCentralWidget(main_content);
 
         self.show();
 
@@ -76,6 +74,7 @@ class AppMainWindow(QMainWindow):
         self.drawAction.setIcon(QIcon(r.ICON_DRAW));
         self.drawAction.setToolTip("Start drawing on the canvas");
         self.drawAction.setStatusTip("Start drawing on the canvas");
+        self.drawAction.triggered.connect(self.startDrawing)
         self.drawAction.setShortcut("Ctrl+D");
         # View
         self.viewTrainingImagesAction = QAction("View Training Images", self);
@@ -128,6 +127,12 @@ class AppMainWindow(QMainWindow):
     def modelTraining(self):
         dlg = peripheralUI.createModelDialog()
         dlg.exec_()
+
+    def startDrawing(self):
+        #Central Widget
+        main_content = c.AppMainContent();
+        self.setCentralWidget(main_content);
+
 
     def exitApp(self):
         confirm = QMessageBox.question(self, "Warning", "Are you sure you want to quit?",
