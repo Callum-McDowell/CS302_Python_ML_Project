@@ -38,10 +38,10 @@ def plot_bar(probability):
     plt.title('Model Prediction Probability')
     return plt
 
-def predict(img):
+def predict(img, modelFilename):
     trans = transforms.ToTensor()
     model = Net()
-    model.load_state_dict(torch.load("Model/model.pkl"))
+    model.load_state_dict(torch.load(modelFilename))
     output = model(trans(img))
     pred = output.data.max(1, keepdim=True)[1]
 

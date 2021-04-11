@@ -5,11 +5,16 @@
 
 #====== Libraries ======#
 from PyQt5.QtWidgets import *
-import PyQt5.QtGui as QtGui;
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 import Model.model_training as model_training
 import resources as r;
 from torchvision import datasets, transforms;
-import urllib.request
+import gzip
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+import os
 
 
 #====== Code ======#
@@ -49,7 +54,7 @@ class PopupBox(QWidget):
     def exitPopup(self):
         self.close();
 
-class createModelDialog(QDialog):
+class CreateModelDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -104,6 +109,7 @@ class createModelDialog(QDialog):
             self.completed = 50
             self.progressBar.setValue(self.completed)
 
+    #Method to start training the model
     def trainModel(self):
         self.textBox.append("Training...")
         try:
@@ -113,4 +119,79 @@ class createModelDialog(QDialog):
             self.textBox.append("Error training the model. Make sure the model has been downloaded first by pressing the 'Download Dataset' button")
             print(e)
 
+class ViewImagesDlg(QDialog):
+    def __init__(self, datasetType):
+        super().__init__()
+        self.setWindowTitle("Dataset Viewer")
+
+        #Determining which dataset to view
+        if datasetType == "training":
+            self.filePath = 'MNIST/raw/train-images-idx3-ubyte.gz'
+            self.num_images = 60000
+        else:
+            self.filePath = 'MNIST/raw/t10k-images-idx3-ubyte.gz'
+            self.num_images = 10000
+
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+
+        #Decompressing the .gz file and appending its contents to a list
+        self.imgList = self.generateImgList()
+        self.imageIndex = 0
+
+        #Adding image as a widget
+        self.img = QLabel(self)
+        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+        self.layout.addWidget(self.img)
+
+        #Button to show next image
+        nextButton = QPushButton("&Next", self)
+        nextButton.clicked.connect(self.showNextImg)
+        self.layout.addWidget(nextButton)
+
+        #Button to show previous image
+        previousButton = QPushButton("&Previous", self)
+        previousButton.clicked.connect(self.showPrevImg)
+        self.layout.addWidget(previousButton)
+
+
+    def generateImgList(self):
+        f = gzip.open(self.filePath,'r')
+
+        image_size = 28
+
+        #Skip first 16 bytes as they're not pixels, according to: http://yann.lecun.com/exdb/mnist/
+        f.read(16)
+
+        buf = f.read(image_size * image_size * self.num_images)
+        data = np.frombuffer(buf, dtype=np.uint8).astype(np.float32)
+        data = data.reshape(self.num_images, image_size, image_size, 1)
+
+        return data
+
+    #Method to show next image when next button is clicked
+    def showNextImg(self):
+        self.imageIndex += 1
+        if self.imageIndex > self.num_images - 1:
+            self.imageIndex = 0
+        print(self.imageIndex)
+        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+    
+    #Method to show previous image when previous button is clicked
+    def showPrevImg(self):
+        self.imageIndex -= 1
+        if self.imageIndex < 0:
+            self.imageIndex = self.num_images - 1
+        print(self.imageIndex)
+        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+
+#Converting directly to pixmap distorts the image, therefore we save it first before reading it as a cv2 img
+def convertToPixmap(img):
+    height, width, channel = img.shape
+    bytesPerLine = 3 * width
+    cv2.imwrite("img.png", img)
+    img = cv2.imread("img.png")
+    os.remove("img.png")
+    qImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
+    return QPixmap(qImg).scaled(150, 150, Qt.KeepAspectRatio)
 

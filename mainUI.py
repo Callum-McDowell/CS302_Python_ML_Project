@@ -78,7 +78,9 @@ class AppMainWindow(QMainWindow):
         self.drawAction.setShortcut("Ctrl+D");
         # View
         self.viewTrainingImagesAction = QAction("View Training Images", self);
-        self.viewTestingImagesAction = QAction("View Testing Imaged", self);
+        self.viewTrainingImagesAction.triggered.connect(self.viewTrainingImages)
+        self.viewTestingImagesAction = QAction("View Testing Images", self);
+        self.viewTestingImagesAction.triggered.connect(self.viewTestingImages)
 
         # Note: Add actions to context menus for drawing canvas
         # https://realpython.com/python-menus-toolbars/#creating-context-menus-through-context-menu-policy
@@ -125,14 +127,25 @@ class AppMainWindow(QMainWindow):
         self.popup.assignText('Icons made by <a href="https://iconmonstr.com">iconmonstr</a>.');
 
     def modelTraining(self):
-        dlg = peripheralUI.createModelDialog()
-        dlg.exec_()
+        trainingDlg = peripheralUI.CreateModelDialog()
+        trainingDlg.exec_()
 
     def startDrawing(self):
-        #Central Widget
-        main_content = c.AppMainContent();
-        self.setCentralWidget(main_content);
+        #Allowing user to select model first
+        modelFilename, _ = QFileDialog.getOpenFileName(self,"Please select model", "Model/","pickle files (*.pkl)");
+        
+        if len(modelFilename) > 0:
+            #Displaying canvas
+            main_content = c.AppMainContent(modelFilename);
+            self.setCentralWidget(main_content);
 
+    def viewTrainingImages(self):
+        viewerDlg = peripheralUI.ViewImagesDlg("training")
+        viewerDlg.exec_()
+
+    def viewTestingImages(self):
+        viewerDlg = peripheralUI.ViewImagesDlg("testing")
+        viewerDlg.exec_()
 
     def exitApp(self):
         confirm = QMessageBox.question(self, "Warning", "Are you sure you want to quit?",

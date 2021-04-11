@@ -113,7 +113,7 @@ class Canvas(QWidget):
 class AppMainContent(QWidget):
     # Our 'central widget' for the MainWindow frame.
     # Core content goes here.
-    def __init__(self):
+    def __init__(self, model):
         super().__init__();
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
@@ -121,20 +121,27 @@ class AppMainContent(QWidget):
         self.layout.addWidget(self.canvas)
         self.textBox = QTextEdit(self)
         self.textBox.setReadOnly(True)
+        self.model = model
         
+        #Change model button
+        changeModelButton = QPushButton('Change model', self)
+        changeModelButton.move(450, 50)
+        changeModelButton.clicked.connect(self.changeModel)
+
         #Clear button
         clearButton = QPushButton('Clear', self)
-        clearButton.move(450, 50)
+        clearButton.move(450, 100)
         clearButton.clicked.connect(self.clear)
     
         #Submit button
         submitButton = QPushButton('Submit', self)
-        submitButton.move(450, 100)
+        submitButton.move(450, 150)
         submitButton.clicked.connect(self.submit)
 
-        self.textBox.move(450, 150)
+        #Displaying prediction and probability graph
+        self.textBox.move(450, 200)
         self.showGraphButton =  QPushButton('Show graph', self)
-        self.showGraphButton.move(450, 200)
+        self.showGraphButton.move(450, 250)
         self.showGraphButton.hide()
         self.showGraphButton.clicked.connect(self.showPlot)
 
@@ -146,7 +153,7 @@ class AppMainContent(QWidget):
             return
 
         #Displaying result
-        pred, self.plt = prediction.predict(img)
+        pred, self.plt = prediction.predict(img, self.model)
         self.textBox.setText(str(pred))
         self.showGraphButton.show()
 
@@ -157,12 +164,20 @@ class AppMainContent(QWidget):
         except Exception:
             pass
         finally:
+            self.textBox.setText("")
             self.canvas.clear()
 
+    #Show probability graph when the "show graph" button is clicked
     def showPlot(self):
         mngr = self.plt.get_current_fig_manager()
         mngr.window.setGeometry(50,100,640, 545)
         self.plt.show()
+
+    #Change current model
+    def changeModel(self):
+        modelFilename, _ = QFileDialog.getOpenFileName(self,"Please select model", "Model/","pickle files (*.pkl)")
+        if len(modelFilename) > 0:
+            self.model = modelFilename
 
   
         
