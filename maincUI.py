@@ -40,6 +40,7 @@ class Canvas(QWidget):
 
         #drawing flag
         self.drawing = False
+        self.drawing_allowed = False;
         #brush size
         self.brushSize = 10
         #color
@@ -47,6 +48,11 @@ class Canvas(QWidget):
   
         #QPoint object to track the point
         self.lastPoint = QPoint()
+
+    # Enable or disable drawing to the canvas (master control)
+    def setDrawingAllowed(self, tf):
+        if isinstance(tf, bool):
+            self.drawing_allowed = tf;
 
     #This method checks for mouse clicks
     def mousePressEvent(self, event):
@@ -62,7 +68,7 @@ class Canvas(QWidget):
     def mouseMoveEvent(self, event):
           
         #Checking if left button is pressed and drawing flag is true
-        if (event.buttons() & Qt.LeftButton) & self.drawing:
+        if (event.buttons() & Qt.LeftButton) & self.drawing & self.drawing_allowed:
               
             #Creating painter object
             painter = QPainter(self.image)
@@ -118,7 +124,7 @@ class Canvas(QWidget):
 class AppMainContent(QWidget):
     # Our 'central widget' for the MainWindow frame.
     # Core content goes here.
-    def __init__(self, model):
+    def __init__(self, model=None):
         super().__init__();
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)

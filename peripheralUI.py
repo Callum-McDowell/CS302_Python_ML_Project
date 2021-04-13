@@ -63,7 +63,7 @@ class PopupBox(QWidget):
 # to use the app.
 
 class ErrorBox(QMessageBox):
-    def __init__(self, title="Error", msg="Error", detail="None"):
+    def __init__(self, title="Error", msg="Error", detail=""):
         super().__init__();
         self.init(title, msg, detail);
 

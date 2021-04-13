@@ -21,8 +21,10 @@ import peripheralUI;
 
 
 #====== Window Setup ======#
-# See here for full guide: https://realpython.com/python-menus-toolbars/
+# See file documentation for functionality.
+# PyQt5 guide here for components: https://realpython.com/python-menus-toolbars/
 class AppMainWindow(QMainWindow):
+    main_content = 0;   # allow us to access central widget instance from within all class methods
 
     def __init__(self):
         super().__init__();
@@ -44,6 +46,9 @@ class AppMainWindow(QMainWindow):
         self.menubar = self.initMenuBar();
         self.toolbar = self.initMainToolBar();
         self.statusbar = self.initStatusBar();
+
+        AppMainWindow.main_content = c.AppMainContent();
+        self.setCentralWidget(AppMainWindow.main_content);
 
         self.show();
 
@@ -76,6 +81,11 @@ class AppMainWindow(QMainWindow):
         self.drawAction.setStatusTip("Start drawing on the canvas");
         self.drawAction.triggered.connect(self.startDrawing)
         self.drawAction.setShortcut("Ctrl+D");
+         # Clear
+        self.clearAction = QAction("&Clear", self);
+        self.clearAction.setIcon(QIcon(r.ICON_TRASH));
+        self.clearAction.setToolTip("Clear the canvas");
+        self.clearAction.triggered.connect(self.clearDrawing);
         # View
         self.viewTrainingImagesAction = QAction("View Training Images", self);
         self.viewTrainingImagesAction.triggered.connect(self.viewTrainingImages)
@@ -108,6 +118,7 @@ class AppMainWindow(QMainWindow):
         self.toolbar = self.addToolBar("Main Tools");
         self.toolbar.addSeparator();
         self.toolbar.addAction(self.drawAction);
+        self.toolbar.addAction(self.clearAction);
 
         #self.toolbar.addWidget(...);
         return self.toolbar;
@@ -131,13 +142,19 @@ class AppMainWindow(QMainWindow):
         trainingDlg.exec_()
 
     def startDrawing(self):
-        #Allowing user to select model first
-        modelFilename, _ = QFileDialog.getOpenFileName(self,"Please select model", "Model/","pickle files (*.pkl)");
-        
-        if len(modelFilename) > 0:
-            #Displaying canvas
-            main_content = c.AppMainContent(modelFilename);
-            self.setCentralWidget(main_content);
+        try:
+            if (AppMainWindow.main_content.canvas.drawing_allowed == True):
+                AppMainWindow.main_content.canvas.drawing_allowed = False;
+            else:
+                AppMainWindow.main_content.canvas.drawing_allowed = True;
+        except ValueError:
+            return;
+            
+    def clearDrawing(self):
+        try:
+            AppMainWindow.main_content.clear();
+        except ValueError:
+            return;
 
     def viewTrainingImages(self):
         viewerDlg = peripheralUI.ViewImagesDlg("training")

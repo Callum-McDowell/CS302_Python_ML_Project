@@ -20,6 +20,7 @@ ICON_EXIT = RESOURCES_DIR + "icon_exit.svg";
 ICON_OPEN = RESOURCES_DIR + "icon_open.svg";
 ICON_HELP = RESOURCES_DIR + "icon_help.svg";
 ICON_DRAW = RESOURCES_DIR + "icon_draw.svg";
+ICON_TRASH = RESOURCES_DIR + "icon_trash.svg";
 ICON_WORKING = RESOURCES_DIR + "icon_working.svg";
 ICON_WARNING = RESOURCES_DIR + "icon_warning.svg";
 
