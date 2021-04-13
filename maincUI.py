@@ -20,7 +20,12 @@ from os import path
 from PIL import Image
 import matplotlib.pyplot as plt
 
+#====== Drawing Canvas ======#
 class Canvas(QWidget):
+    # The widget we use to hand draw new numbers for validation/demo.
+    # Is an important part of the main content window, and is added/
+    # removed when the model is ready/unready to be used.
+
     def __init__(self):
         super().__init__();
 
@@ -150,13 +155,19 @@ class AppMainContent(QWidget):
         try:
             img = self.canvas.submit()
         except:
+            self.generateErrorBox("Error", "No canvas input to submit")
             return
 
         #Displaying result
-        pred, self.plt = prediction.predict(img, self.model)
-        self.textBox.setText(str(pred))
-        self.showGraphButton.show()
-
+        try:
+            pred, self.plt = prediction.predict(img, self.model)
+            self.textBox.setText(str(pred))
+            self.showGraphButton.show()
+        except Exception as e:
+            # If an invalid file is loaded...
+            self.generateErrorBox("Error", "Invalid Model", e)
+            return
+        
     def clear(self):
         #Close plot if it's still open
         try:
@@ -178,6 +189,10 @@ class AppMainContent(QWidget):
         modelFilename, _ = QFileDialog.getOpenFileName(self,"Please select model", "Model/","pickle files (*.pkl)")
         if len(modelFilename) > 0:
             self.model = modelFilename
+
+    def generateErrorBox(self, title="Error", message="Error", detail="None"):
+        error_box = peripheralUI.ErrorBox(title, message, detail);
+        error_box.render();
 
   
         

@@ -4,6 +4,7 @@
 # content when initialised. e.g. popup info boxes.
 
 #====== Libraries ======#
+import resources as r
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -22,6 +23,7 @@ import os
 # PopupBox()
 # Basic low priority box that displays rich-format text in a box,
 # and can be closed when the user chooses. Independent window.
+
 class PopupBox(QWidget):
     # Text box that pops up in a new windows.
     # Useful for displaying reports and detailed information.
@@ -54,11 +56,44 @@ class PopupBox(QWidget):
     def exitPopup(self):
         self.close();
 
+
+# ErrorBox()
+# Simple warning info box with configurable parameters.
+# ErrorBox is blocking; the user must close it to continue
+# to use the app.
+
+class ErrorBox(QMessageBox):
+    def __init__(self, title="Error", msg="Error", detail="None"):
+        super().__init__();
+        self.init(title, msg, detail);
+
+    def init(self, title, msg, detail):
+        self.setWindowTitle(title);
+        self.setWindowIcon(QIcon(r.ICON_WARNING));
+        self.setIcon(QMessageBox.Warning);
+        
+        self.setText(msg);
+        detail = str(detail);       # must convert to string for readable form
+        if (isinstance(detail, str)):
+            self.setInformativeText(detail);
+
+    def render(self):
+        # Enable blocking (cannot use app until box acknowledged):
+        self.exec_();
+        self.show();
+
+
+
+# Download and Training Dialogue
+# Allows the user to download the MNIST dataset and train the model.
+# Shows progress downloading and training with a progress bar.
+
 class CreateModelDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
         self.setWindowTitle("Train Model")
+        self.setWindowIcon(QIcon(r.ICON_WORKING))
         self.textBox = QTextEdit()
         self.textBox.setReadOnly(True)
 
@@ -118,6 +153,10 @@ class CreateModelDialog(QDialog):
         except Exception as e:
             self.textBox.append("Error training the model. Make sure the model has been downloaded first by pressing the 'Download Dataset' button")
             print(e)
+
+
+# Image Viewer Dialogue
+# View images in a dataset one-by-one. Change image with 'next' and 'previous'.
 
 class ViewImagesDlg(QDialog):
     def __init__(self, datasetType):
