@@ -67,6 +67,7 @@ class AppMainWindow(QMainWindow):
         self.exitAction.triggered.connect(self.exitApp);
         # Train Model
         self.trainModel = QAction("&Train Model", self);
+        self.trainModel.setIcon(QIcon(r.ICON_WORKING));
         self.trainModel.setToolTip("Train handwriting recognition model");
         self.trainModel.setStatusTip("Train handwriting recognition model");
         self.trainModel.triggered.connect(self.modelTraining);
@@ -75,21 +76,24 @@ class AppMainWindow(QMainWindow):
         self.helpAction.setIcon(QIcon(r.ICON_HELP));
         self.helpAction.triggered.connect(self.helpDialogue);
         # Draw
-        self.drawAction = QAction("&Draw", self);
-        self.drawAction.setIcon(QIcon(r.ICON_DRAW));
-        self.drawAction.setToolTip("Start drawing on the canvas");
-        self.drawAction.setStatusTip("Start drawing on the canvas");
-        self.drawAction.triggered.connect(self.startDrawing)
-        self.drawAction.setShortcut("Ctrl+D");
-         # Clear
+        self.drawTool = QToolButton(self);
+        self.drawTool.setIcon(QIcon(r.ICON_DRAW));
+        self.drawTool.setToolTip("Toggle drawing on the canvas");
+        self.drawTool.setCheckable(True);
+        self.drawTool.setShortcut("Ctrl+D");
+        self.drawTool.toggled.connect(self.startDrawing);
+        # Clear
         self.clearAction = QAction("&Clear", self);
         self.clearAction.setIcon(QIcon(r.ICON_TRASH));
         self.clearAction.setToolTip("Clear the canvas");
+        self.clearAction.setShortcut("Ctrl+F");
         self.clearAction.triggered.connect(self.clearDrawing);
         # View
         self.viewTrainingImagesAction = QAction("View Training Images", self);
+        self.viewTrainingImagesAction.setIcon(QIcon(r.ICON_FIND));
         self.viewTrainingImagesAction.triggered.connect(self.viewTrainingImages)
         self.viewTestingImagesAction = QAction("View Testing Images", self);
+        self.viewTestingImagesAction.setIcon(QIcon(r.ICON_FIND));
         self.viewTestingImagesAction.triggered.connect(self.viewTestingImages)
 
         # Note: Add actions to context menus for drawing canvas
@@ -117,10 +121,10 @@ class AppMainWindow(QMainWindow):
     def initMainToolBar(self):
         self.toolbar = self.addToolBar("Main Tools");
         self.toolbar.addSeparator();
-        self.toolbar.addAction(self.drawAction);
+        
+        self.toolbar.addWidget(self.drawTool);
         self.toolbar.addAction(self.clearAction);
 
-        #self.toolbar.addWidget(...);
         return self.toolbar;
 
     def initStatusBar(self):
@@ -133,6 +137,9 @@ class AppMainWindow(QMainWindow):
 
     def helpDialogue(self):
         self.popup = peripheralUI.PopupBox("Help", r.ICON_HELP);
+        self.popup.assignText("By: Mazen Darwish, Callum McDowell")
+        self.popup.assignText('Full documentation at: <a href="https://github.com/COMPSYS-302-2021/project-1-team_04">https://github.com/COMPSYS-302-2021/project-1-team_04</a>');
+        self.popup.assignText("");  # new line (\n doesn't work)
         self.popup.assignText("<b>Icon credit to:</b>");
         self.popup.assignText('Icons made by <a href="https://www.freepik.com">Freepik</a> from <a href="https://www.flaticon.com/">www.flaticon.com</a>.');
         self.popup.assignText('Icons made by <a href="https://iconmonstr.com">iconmonstr</a>.');

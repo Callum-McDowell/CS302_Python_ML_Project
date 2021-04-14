@@ -23,4 +23,5 @@ ICON_DRAW = RESOURCES_DIR + "icon_draw.svg";
 ICON_TRASH = RESOURCES_DIR + "icon_trash.svg";
 ICON_WORKING = RESOURCES_DIR + "icon_working.svg";
 ICON_WARNING = RESOURCES_DIR + "icon_warning.svg";
+ICON_FIND = RESOURCES_DIR + "icon_find.svg";
 
