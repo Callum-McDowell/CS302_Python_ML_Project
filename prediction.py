@@ -25,10 +25,6 @@ class Net(nn.Module):
 
 #This function plots the probability bar graph
 def plot_bar(probability):
-    
-    #Close previous plot if it's still open
-    plt.close()
-
     #Get array of indices 
     index = np.arange(len(probability))
 
@@ -40,12 +36,12 @@ def plot_bar(probability):
     plt.ylabel('Probability', fontsize=20)
     plt.xticks(index, fontsize=8, rotation=30)
     plt.title('Model Prediction Probability')
-    plt.show()
+    return plt
 
-def predict(img):
+def predict(img, modelFilename):
     trans = transforms.ToTensor()
     model = Net()
-    model.load_state_dict(torch.load("Model/model.pkl"))
+    model.load_state_dict(torch.load(modelFilename))
     output = model(trans(img))
     pred = output.data.max(1, keepdim=True)[1]
 
@@ -57,4 +53,5 @@ def predict(img):
             relative_probability[ind] = value + (-(min(output[0].tolist())))
 
     #Plot probability graph
-    plot_bar(relative_probability)
+    plt = plot_bar(relative_probability)
+    return int(pred), plt
