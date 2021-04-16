@@ -129,13 +129,13 @@ class CreateModelDialog(QDialog):
 
         # Downloading MNIST Dataset (if it doesn't already exist)
         try:
-            datasets.MNIST(root= '',
+            datasets.MNIST(root= r.MODULE_DIR,
                             train=True,
                             transform=transforms.ToTensor(),
                             download=True)
             self.textBox.append("Dataset already downloaded!")
         except:
-            datasets.MNIST(root= '',
+            datasets.MNIST(root= r.MODULE_DIR,
                             train=True,
                             transform=transforms.ToTensor(),
                             download=True)
