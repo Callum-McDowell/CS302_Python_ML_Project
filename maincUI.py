@@ -135,7 +135,7 @@ class AppMainContent(QWidget):
         self.model = model
         
         #Change model button
-        changeModelButton = QPushButton('Change model', self)
+        changeModelButton = QPushButton('Model Weights', self)
         changeModelButton.move(450, 50)
         changeModelButton.clicked.connect(self.changeModel)
 

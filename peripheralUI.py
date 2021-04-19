@@ -8,8 +8,8 @@ import resources as r
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+
 import Model.model_training as model_training
-import resources as r;
 from torchvision import datasets, transforms;
 import gzip
 import numpy as np
@@ -81,7 +81,6 @@ class ErrorBox(QMessageBox):
         # Enable blocking (cannot use app until box acknowledged):
         self.exec_();
         self.show();
-
 
 
 # Download and Training Dialogue
@@ -224,13 +223,13 @@ class ViewImagesDlg(QDialog):
         print(self.imageIndex)
         self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
 
-#Converting directly to pixmap distorts the image, therefore we save it first before reading it as a cv2 img
-def convertToPixmap(img):
-    height, width, channel = img.shape
-    bytesPerLine = 3 * width
-    cv2.imwrite("img.png", img)
-    img = cv2.imread("img.png")
-    os.remove("img.png")
-    qImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
-    return QPixmap(qImg).scaled(150, 150, Qt.KeepAspectRatio)
+    #Converting directly to pixmap distorts the image, therefore we save it first before reading it as a cv2 img
+    def convertToPixmap(img):
+        height, width, channel = img.shape
+        bytesPerLine = 3 * width
+        cv2.imwrite("img.png", img)
+        img = cv2.imread("img.png")
+        os.remove("img.png")
+        qImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
+        return QPixmap(qImg).scaled(150, 150, Qt.KeepAspectRatio)
 
