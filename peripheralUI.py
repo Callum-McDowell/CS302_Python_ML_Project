@@ -9,13 +9,16 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-import Model.model_training as model_training
 from torchvision import datasets, transforms;
 import gzip
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import os
+
+import Model.model_training as model_linear_training
+#import Model.model1 as model_temp_training
+MODEL_LIST = ["Linear", "Convolutional", "Complex"]
 
 
 #====== Code ======#
@@ -93,34 +96,43 @@ class CreateModelDialog(QDialog):
 
         self.setWindowTitle("Train Model")
         self.setWindowIcon(QIcon(r.ICON_WORKING))
+        
         self.textBox = QTextEdit()
         self.textBox.setReadOnly(True)
-
-        downloadDataButton = QPushButton("&Download Dataset", self);
-        downloadDataButton.setToolTip("Download MNIST Dataset");
-        downloadDataButton.setStatusTip("Download MNIST Dataset");
-        downloadDataButton.clicked.connect(self.downloadMNISTData);
 
         self.progressBar = QProgressBar(self)
         self.completed = 0
 
-        trainButton = QPushButton("&Train Model", self);
-        trainButton.setToolTip("Train Model");
-        trainButton.setStatusTip("Train Model");
-        trainButton.clicked.connect(self.trainModel)
+        self.downloadDataButton = QPushButton("&Download Dataset", self);
+        self.downloadDataButton.setToolTip("Download MNIST Dataset");
+        self.downloadDataButton.setStatusTip("Download MNIST Dataset");
+        self.downloadDataButton.clicked.connect(self.downloadMNISTData);
 
-        cancelButton = QPushButton("&Close", self);
-        cancelButton.setToolTip("Close model-creation window");
-        cancelButton.setStatusTip("Close model-creation window");
-        cancelButton.clicked.connect(self.close)
+        self.modelCombo = QComboBox();
+        self.modelCombo.setToolTip("Select your model structure")
+        self.modelCombo.addItems(MODEL_LIST);
+
+        self.trainButton = QPushButton("&Train Model", self);
+        self.trainButton.setToolTip("Train Model");
+        self.trainButton.setStatusTip("Train Model");
+        self.trainButton.clicked.connect(lambda startTrain: self.trainModel(self.modelCombo.currentText()));
+        # We must register an interim function ('startTrain()') for the event to call a func with params correctly
+        # https://forum.qt.io/topic/60640/pyqt-immediately-calling-function-handler-upon-setup-why/4
+
+        self.cancelButton = QPushButton("&Close", self);
+        self.cancelButton.setToolTip("Close model-creation window");
+        self.cancelButton.setStatusTip("Close model-creation window");
+        self.cancelButton.clicked.connect(self.close)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.textBox)
         self.layout.addWidget(self.progressBar)
-        self.layout.addWidget(downloadDataButton)
-        self.layout.addWidget(trainButton)
-        self.layout.addWidget(cancelButton)
+        self.layout.addWidget(self.downloadDataButton)
+        self.layout.addWidget(self.modelCombo)
+        self.layout.addWidget(self.trainButton)
+        self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
+
 
     def downloadMNISTData(self):
         self.textBox.append("Downloading dataset...")
@@ -144,14 +156,23 @@ class CreateModelDialog(QDialog):
             self.progressBar.setValue(self.completed)
 
     #Method to start training the model
-    def trainModel(self):
-        self.textBox.append("Training...")
+    def trainModel(self, model_str):
+        self.textBox.append(f"Training {model_str}...");
         try:
-            accuracy = model_training.trainRecognitionModel(self.completed, self.progressBar)
-            self.textBox.append("Training Done\nAccuracy: " + str(round(float(accuracy))) + "%")
+            if (model_str == "Convolutional"):
+                accuracy = 0;
+                # accuracy = model_..._training.trainRecognitionModel(self.completed, self.progressBar);
+            elif (model_str == "Complex"):
+                pass;
+            else:
+                # default to linear model
+                accuracy = model_linear_training.trainRecognitionModel(self.completed, self.progressBar);
+
         except Exception as e:
-            self.textBox.append("Error training the model. Make sure the model has been downloaded first by pressing the 'Download Dataset' button")
-            print(e)
+            self.textBox.append("Error training the model. Make sure the model has been downloaded first by pressing the 'Download Dataset' button");
+            print(e);
+        else:
+            self.textBox.append("Training Done\nAccuracy: " + str(round(float(accuracy))) + "%");
 
 
 # Image Viewer Dialogue
