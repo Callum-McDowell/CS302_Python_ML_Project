@@ -8,14 +8,17 @@ import resources as r
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import Model.model_training as model_training
-import resources as r;
+
 from torchvision import datasets, transforms;
 import gzip
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import os
+
+# import Model.model_training as model_linear_training
+# #import Model.model1 as model_temp_training
+# MODEL_LIST = ["Linear", "Convolutional", "Complex"]
 
 
 #====== Code ======#
@@ -83,76 +86,93 @@ class ErrorBox(QMessageBox):
         self.show();
 
 
-
 # Download and Training Dialogue
 # Allows the user to download the MNIST dataset and train the model.
 # Shows progress downloading and training with a progress bar.
 
-class CreateModelDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
+# class CreateModelDialog(QDialog):
+#     def __init__(self, parent=None):
+#         super().__init__(parent=parent)
 
-        self.setWindowTitle("Train Model")
-        self.setWindowIcon(QIcon(r.ICON_WORKING))
-        self.textBox = QTextEdit()
-        self.textBox.setReadOnly(True)
+#         self.setWindowTitle("Train Model")
+#         self.setWindowIcon(QIcon(r.ICON_WORKING))
+        
+#         self.textBox = QTextEdit()
+#         self.textBox.setReadOnly(True)
 
-        downloadDataButton = QPushButton("&Download Dataset", self);
-        downloadDataButton.setToolTip("Download MNIST Dataset");
-        downloadDataButton.setStatusTip("Download MNIST Dataset");
-        downloadDataButton.clicked.connect(self.downloadMNISTData);
+#         self.progressBar = QProgressBar(self)
+#         self.completed = 0
 
-        self.progressBar = QProgressBar(self)
-        self.completed = 0
+#         self.downloadDataButton = QPushButton("&Download Dataset", self);
+#         self.downloadDataButton.setToolTip("Download MNIST Dataset");
+#         self.downloadDataButton.setStatusTip("Download MNIST Dataset");
+#         self.downloadDataButton.clicked.connect(self.downloadMNISTData);
 
-        trainButton = QPushButton("&Train Model", self);
-        trainButton.setToolTip("Train Model");
-        trainButton.setStatusTip("Train Model");
-        trainButton.clicked.connect(self.trainModel)
+#         self.modelCombo = QComboBox();
+#         self.modelCombo.setToolTip("Select your model structure")
+#         self.modelCombo.addItems(MODEL_LIST);
 
-        cancelButton = QPushButton("&Close", self);
-        cancelButton.setToolTip("Close model-creation window");
-        cancelButton.setStatusTip("Close model-creation window");
-        cancelButton.clicked.connect(self.close)
+#         self.trainButton = QPushButton("&Train Model", self);
+#         self.trainButton.setToolTip("Train Model");
+#         self.trainButton.setStatusTip("Train Model");
+#         self.trainButton.clicked.connect(lambda startTrain: self.trainModel(self.modelCombo.currentText()));
+#         # We must register an interim function ('startTrain()') for the event to call a func with params correctly
+#         # https://forum.qt.io/topic/60640/pyqt-immediately-calling-function-handler-upon-setup-why/4
 
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.textBox)
-        self.layout.addWidget(self.progressBar)
-        self.layout.addWidget(downloadDataButton)
-        self.layout.addWidget(trainButton)
-        self.layout.addWidget(cancelButton)
-        self.setLayout(self.layout)
+#         self.cancelButton = QPushButton("&Close", self);
+#         self.cancelButton.setToolTip("Close model-creation window");
+#         self.cancelButton.setStatusTip("Close model-creation window");
+#         self.cancelButton.clicked.connect(self.close)
 
-    def downloadMNISTData(self):
-        self.textBox.append("Downloading dataset...")
-        self.textBox.repaint()
+#         self.layout = QVBoxLayout()
+#         self.layout.addWidget(self.textBox)
+#         self.layout.addWidget(self.progressBar)
+#         self.layout.addWidget(self.downloadDataButton)
+#         self.layout.addWidget(self.modelCombo)
+#         self.layout.addWidget(self.trainButton)
+#         self.layout.addWidget(self.cancelButton)
+#         self.setLayout(self.layout)
 
-        # Downloading MNIST Dataset (if it doesn't already exist)
-        try:
-            datasets.MNIST(root= r.MODULE_DIR,
-                            train=True,
-                            transform=transforms.ToTensor(),
-                            download=True)
-            self.textBox.append("Dataset already downloaded!")
-        except:
-            datasets.MNIST(root= r.MODULE_DIR,
-                            train=True,
-                            transform=transforms.ToTensor(),
-                            download=True)
-            self.textBox.append("Dataset downloaded!")
-        finally:
-            self.completed = 50
-            self.progressBar.setValue(self.completed)
 
-    #Method to start training the model
-    def trainModel(self):
-        self.textBox.append("Training...")
-        try:
-            accuracy = model_training.trainRecognitionModel(self.completed, self.progressBar)
-            self.textBox.append("Training Done\nAccuracy: " + str(round(float(accuracy))) + "%")
-        except Exception as e:
-            self.textBox.append("Error training the model. Make sure the model has been downloaded first by pressing the 'Download Dataset' button")
-            print(e)
+#     def downloadMNISTData(self):
+#         self.textBox.append("Downloading dataset...")
+#         self.textBox.repaint()
+
+#         # Downloading MNIST Dataset (if it doesn't already exist)
+#         try:
+#             datasets.MNIST(root= r.MODULE_DIR,
+#                             train=True,
+#                             transform=transforms.ToTensor(),
+#                             download=True)
+#             self.textBox.append("Dataset already downloaded!")
+#         except:
+#             datasets.MNIST(root= r.MODULE_DIR,
+#                             train=True,
+#                             transform=transforms.ToTensor(),
+#                             download=True)
+#             self.textBox.append("Dataset downloaded!")
+#         finally:
+#             self.completed = 50
+#             self.progressBar.setValue(self.completed)
+
+#     #Method to start training the model
+#     def trainModel(self, model_str):
+#         self.textBox.append(f"Training {model_str}...");
+#         try:
+#             if (model_str == "Convolutional"):
+#                 accuracy = 0;
+#                 # accuracy = model_..._training.trainRecognitionModel(self.completed, self.progressBar);
+#             elif (model_str == "Complex"):
+#                 pass;
+#             else:
+#                 # default to linear model
+#                 accuracy = model_linear_training.trainRecognitionModel(self.completed, self.progressBar);
+
+#         except Exception as e:
+#             self.textBox.append("Error training the model. Make sure the model has been downloaded first by pressing the 'Download Dataset' button");
+#             print(e);
+#         else:
+#             self.textBox.append("Training Done\nAccuracy: " + str(round(float(accuracy))) + "%");
 
 
 # Image Viewer Dialogue
@@ -180,7 +200,7 @@ class ViewImagesDlg(QDialog):
 
         #Adding image as a widget
         self.img = QLabel(self)
-        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
         self.layout.addWidget(self.img)
 
         #Button to show next image
@@ -214,7 +234,7 @@ class ViewImagesDlg(QDialog):
         if self.imageIndex > self.num_images - 1:
             self.imageIndex = 0
         print(self.imageIndex)
-        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
     
     #Method to show previous image when previous button is clicked
     def showPrevImg(self):
@@ -222,15 +242,15 @@ class ViewImagesDlg(QDialog):
         if self.imageIndex < 0:
             self.imageIndex = self.num_images - 1
         print(self.imageIndex)
-        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
 
-#Converting directly to pixmap distorts the image, therefore we save it first before reading it as a cv2 img
-def convertToPixmap(img):
-    height, width, channel = img.shape
-    bytesPerLine = 3 * width
-    cv2.imwrite("img.png", img)
-    img = cv2.imread("img.png")
-    os.remove("img.png")
-    qImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
-    return QPixmap(qImg).scaled(150, 150, Qt.KeepAspectRatio)
+    #Converting directly to pixmap distorts the image, therefore we save it first before reading it as a cv2 img
+    def convertToPixmap(self, img):
+        height, width, channel = img.shape
+        bytesPerLine = 3 * width
+        cv2.imwrite("img.png", img)
+        img = cv2.imread("img.png")
+        os.remove("img.png")
+        qImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
+        return QPixmap(qImg).scaled(150, 150, Qt.KeepAspectRatio)
 

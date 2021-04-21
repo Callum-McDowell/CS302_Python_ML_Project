@@ -12,7 +12,9 @@ import resources as r;
 import peripheralUI;
 import sys
 import canvasToMNIST
-import prediction
+import modelManager
+
+#import prediction
 import cv2
 import os
 import os.path
@@ -126,75 +128,134 @@ class AppMainContent(QWidget):
     # Core content goes here.
     def __init__(self, model=None):
         super().__init__();
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        self.canvas = Canvas()
-        self.layout.addWidget(self.canvas)
-        self.textBox = QTextEdit(self)
-        self.textBox.setReadOnly(True)
-        self.model = model
         
-        #Change model button
-        changeModelButton = QPushButton('Change model', self)
-        changeModelButton.move(450, 50)
-        changeModelButton.clicked.connect(self.changeModel)
+        self.model = model
+        self.model_manager = modelManager.modelManager()
 
-        #Clear button
-        clearButton = QPushButton('Clear', self)
-        clearButton.move(450, 100)
-        clearButton.clicked.connect(self.clear)
-    
-        #Submit button
-        submitButton = QPushButton('Submit', self)
-        submitButton.move(450, 150)
-        submitButton.clicked.connect(self.submit)
+        # hbox: [ canvas, sidebox: [vbox: [...]] ]
 
-        #Displaying prediction and probability graph
-        self.textBox.move(450, 200)
-        self.showGraphButton =  QPushButton('Show graph', self)
-        self.showGraphButton.move(450, 250)
-        self.showGraphButton.hide()
-        self.showGraphButton.clicked.connect(self.showPlot)
+        # | hbox:   |  sidebox: |
+        # |         | --------- |
+        # | canvas  |  model    |
+        # |         | --------- |
+        # |         |  tools    |
+
+        self.hbox = QHBoxLayout();
+        self.vbox = QVBoxLayout();
+        self.canvas = Canvas();
+        self.canvasbox = QWidget(self);
+        self.sidebox = QWidget(self);
+
+        self.setLayout(self.hbox);
+        self.hbox.addWidget(self.canvasbox);
+        self.hbox.addWidget(self.sidebox);
+
+        # canvasBox
+        self.canvasvbox = QVBoxLayout();
+        self.canvasbox.setLayout(self.canvasvbox);
+        self.canvasvbox.addWidget(self.canvas);
+        self.canvasvbox.addStretch(1);
+
+        # sideBox
+        self.sidebox.setLayout(self.vbox);
+        
+        # modelGroupBox
+        self.modelGroup = QGroupBox("Model Options");
+        self.modelGroupLayout = QVBoxLayout();
+        self.modelGroup.setLayout(self.modelGroupLayout);
+        self.vbox.addWidget(self.modelGroup);
+        # -- modelLabel
+        self.modelLabel = QLabel();
+        self.modelLabel.setFont(QFont('Sans Serif', 10));
+        self.updateModelLabel();
+        self.modelGroupLayout.addWidget(self.modelLabel);
+        # -- modelSelectCombo
+        self.modelSelectCombo = QComboBox();
+        self.modelSelectCombo.addItems(modelManager.MODEL_LIST);
+        self.modelSelectCombo.textActivated.connect(lambda comboEvent: self.setModelName(self.modelSelectCombo.currentText()));
+        self.modelGroupLayout.addWidget(self.modelSelectCombo);
+        # -- modelWeightButton
+        self.modelWeightButton = QPushButton("Model Weights", self);
+        self.modelWeightButton.clicked.connect(self.changeModelWeights);
+        self.modelGroupLayout.addWidget(self.modelWeightButton);
+
+        self.vbox.addStretch(1);
+
+        # toolsGroupBox
+        self.toolsGroup = QGroupBox("Tools");
+        self.toolsGroupLayout = QVBoxLayout();
+        self.toolsGroup.setLayout(self.toolsGroupLayout);
+        self.vbox.addWidget(self.toolsGroup);
+        # -- clearButton
+        self.clearButton = QPushButton("Clear", self);
+        self.clearButton.clicked.connect(self.clear);
+        self.toolsGroupLayout.addWidget(self.clearButton);
+        # -- predictionLabel
+        self.predLabel = QLabel(self);
+        self.predLabel.setFont(QFont('Sans Serif', 10));
+        self.setPredLabel("");
+        self.toolsGroupLayout.addWidget(self.predLabel);
+        # -- submitButton
+        self.submitButton = QPushButton("Submit", self);
+        self.submitButton.clicked.connect(self.submit);
+        self.toolsGroupLayout.addWidget(self.submitButton);
+        # -- showGraphButton
+        self.toggleGraphButton =  QPushButton('Hide/Show Graph', self);
+        self.toggleGraphButton.hide();
+        self.toggleGraphButton.clicked.connect(self.togglePlot);
+        self.toolsGroupLayout.addWidget(self.toggleGraphButton);
+
+        self.vbox.addStretch(5);
+
+    def setModelName(self, text):
+        self.model_manager.setModelName(text);
+        self.updateModelLabel();
+
+    def updateModelLabel(self):
+        self.modelLabel.setText("Model: " + self.model_manager.model_name);
+
+    def setPredLabel(self, text):
+        self.predLabel.setText("Predicted value is: <b>" + text + "</b>");
 
     def submit(self):
         #Exception would be executed if no input is found
         try:
-            img = self.canvas.submit()
+            img = self.canvas.submit();
+            self.updateModelLabel();
         except:
-            self.generateErrorBox("Error", "No canvas input to submit")
-            return
+            self.generateErrorBox("Error", "No canvas input to submit");
+            return;
 
-        #Displaying result
         try:
-            pred, self.plt = prediction.predict(img, self.model)
-            self.textBox.setText(str(pred))
-            self.showGraphButton.show()
-        except Exception as e:
-            # If an invalid file is loaded...
-            self.generateErrorBox("Error", "Invalid Model", e)
-            return
-        
+            pred, self.plot = self.model_manager.predictWithModel(img);
+            self.setPredLabel(str(pred));
+            self.toggleGraphButton.show();
+        except:
+            # None is returned if predict() fails.
+            self.changeModelWeights();
+
     def clear(self):
         #Close plot if it's still open
         try:
-            self.plt.close()
+            plt.close();
         except Exception:
-            pass
+            pass;
         finally:
-            self.textBox.setText("")
-            self.canvas.clear()
+            self.setPredLabel("");
+            self.canvas.clear();
 
     #Show probability graph when the "show graph" button is clicked
-    def showPlot(self):
-        mngr = self.plt.get_current_fig_manager()
-        mngr.window.setGeometry(50,100,640, 545)
-        self.plt.show()
+    def togglePlot(self):
+        if (len(plt.get_fignums()) > 0):
+            plt.close()
+        else:
+            self.model_manager.createBarPlot();
 
-    #Change current model
-    def changeModel(self):
-        modelFilename, _ = QFileDialog.getOpenFileName(self,"Please select model", "Model/","pickle files (*.pkl)")
-        if len(modelFilename) > 0:
-            self.model = modelFilename
+    def changeModelWeights(self):
+        self.model_manager.changeModelWeightsDir(self);
+
+    def getModelManager(self):
+        return self.model_manager;
 
     def generateErrorBox(self, title="Error", message="Error", detail="None"):
         error_box = peripheralUI.ErrorBox(title, message, detail);

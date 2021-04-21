@@ -17,6 +17,7 @@ from PyQt5.QtGui import QIcon;
 import resources as r;
 import maincUI as c;
 import peripheralUI;
+import modelManager;
 
 
 
@@ -38,7 +39,8 @@ class AppMainWindow(QMainWindow):
         self.layout = QVBoxLayout
         # Code
         self.setWindowTitle(WINDOW_TITLE);
-        self.setFixedSize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+        self.resize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+        #self.setFixedSize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
         self.setWindowIcon(QIcon(r.ICON_WINDOW));
         self.centreWindow();
         # Core Components
@@ -141,12 +143,15 @@ class AppMainWindow(QMainWindow):
         self.popup.assignText('Full documentation at: <a href="https://github.com/COMPSYS-302-2021/project-1-team_04">https://github.com/COMPSYS-302-2021/project-1-team_04</a>');
         self.popup.assignText("");  # new line (\n doesn't work)
         self.popup.assignText("<b>Icon credit to:</b>");
-        self.popup.assignText('Icons made by <a href="https://www.freepik.com">Freepik</a> from <a href="https://www.flaticon.com/">www.flaticon.com</a>.');
-        self.popup.assignText('Icons made by <a href="https://iconmonstr.com">iconmonstr</a>.');
+        self.popup.assignText('Icons used with permission from <a href="https://www.freepik.com">Freepik</a> from <a href="https://www.flaticon.com/">www.flaticon.com</a>.');
+        self.popup.assignText('Icons used with permission from <a href="https://iconmonstr.com">iconmonstr</a>.');
 
     def modelTraining(self):
-        trainingDlg = peripheralUI.CreateModelDialog()
-        trainingDlg.exec_()
+        try:
+            train_dlg = modelManager.CreateModelDialog(parent= self, manager= self.centralWidget().model_manager);
+        except Exception as e:
+            print(e);
+            return;
 
     def startDrawing(self):
         try:
@@ -176,11 +181,3 @@ class AppMainWindow(QMainWindow):
                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No);
         if (confirm == QMessageBox.Yes):
           self.close();
-
-
-
-# If this module is run as main, execute the below:
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    appwin = AppMainWindow()
-    sys.exit(app.exec_())
