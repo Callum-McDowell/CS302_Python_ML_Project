@@ -19,6 +19,7 @@ import time;
 from torch.utils import data;
 from torchvision import datasets, models;
 from torchvision.transforms import ToTensor, Lambda;
+from torch.nn import functional as F
 # Model:
 from torch import nn, cuda;
 
@@ -27,7 +28,7 @@ MODEL_CODE = "Conv"
 
 
 #====== Hyper Parameters ======#
-number_of_epochs = 10; # arbitrary
+number_of_epochs = 4; # arbitrary
 batch_size = 64;        # arbitrary
 learning_rate = 1e-2;
 momentum = 0.9;

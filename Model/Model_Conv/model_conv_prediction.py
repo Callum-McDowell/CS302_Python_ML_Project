@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import numpy as np
 
 #====== Hyper Parameters ======#
-number_of_epochs = 10; # arbitrary
+number_of_epochs = 4; # arbitrary
 batch_size = 64;        # arbitrary
 learning_rate = 1e-2;
 momentum = 0.9;
@@ -51,10 +51,13 @@ class Model(nn.Module):
 def predict(img, weights_dir):
     try:
         trans = transforms.ToTensor()
+        img = trans(img);
+        img = torch.unsqueeze(img, 0);  # convert from 3D to 4D (to add missing batch dimension)
+
         model = Model()
         model.load_state_dict(torch.load(weights_dir), strict= False)
         # strict=False; so the dict is loaded correctly despite .module labelling from the nn.Sequential() structure
-        output = model(trans(img))
+        output = model(img)
         pred = output.data.max(1, keepdim=True)[1]
 
         #Getting the relative probability of the predictions

@@ -200,7 +200,7 @@ class ViewImagesDlg(QDialog):
 
         #Adding image as a widget
         self.img = QLabel(self)
-        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
         self.layout.addWidget(self.img)
 
         #Button to show next image
@@ -234,7 +234,7 @@ class ViewImagesDlg(QDialog):
         if self.imageIndex > self.num_images - 1:
             self.imageIndex = 0
         print(self.imageIndex)
-        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
     
     #Method to show previous image when previous button is clicked
     def showPrevImg(self):
@@ -242,10 +242,10 @@ class ViewImagesDlg(QDialog):
         if self.imageIndex < 0:
             self.imageIndex = self.num_images - 1
         print(self.imageIndex)
-        self.img.setPixmap(convertToPixmap(self.imgList[self.imageIndex]))
+        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
 
     #Converting directly to pixmap distorts the image, therefore we save it first before reading it as a cv2 img
-    def convertToPixmap(img):
+    def convertToPixmap(self, img):
         height, width, channel = img.shape
         bytesPerLine = 3 * width
         cv2.imwrite("img.png", img)

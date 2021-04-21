@@ -37,13 +37,14 @@ class Model(nn.Module):
         super(Model, self).__init__();
         self.Flatten = nn.Flatten();    # Convert images from 2D to 1D array
 
-        l1 = 25*25;
-        l2 = 22*22;
-        l3 = 18*18;
-        l4 = 13*13;
-        l5 = 4*4;
+        l1 = 26*26;
+        l2 = 24*24;
+        l3 = 20*20;
+        l4 = 18*18;
+        l5 = 16*16;
+        l6 = 10;
 
-        self.linear_relu_stack = nn.Sequential(
+        self.composite_stack = nn.Sequential(
             # 6 layer stack
             # linear downscaling in data size
             # ReLu to identify non-linear behaviour for closer fitting
@@ -57,12 +58,16 @@ class Model(nn.Module):
             nn.ReLU(),
             nn.Linear(l4, l5),
             nn.ReLU(),
+            nn.Linear(l5, l6),
+            nn.ReLU()
         )
 
     def forward(self, x):
         x = self.Flatten(x);
-        logits = self.linear_relu_stack(x);
+        logits = self.composite_stack(x);
         return logits;
+
+
 # trainModel()
 # 
 

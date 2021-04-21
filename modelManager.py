@@ -49,7 +49,7 @@ class modelManager():
         try:
             if (self.model_name == "Convolutional"):
                 pred, self.plot_probabilities = model_conv_prediction.predict(image, self.model_weights_dir);
-                
+
             elif (self.model_name == "Complex"):
                 pass;
                 # pred, self.plot_probabilities = predFile.predict(image, self.model_weights_dir);
@@ -180,8 +180,8 @@ class CreateModelDialog(QDialog):
         self.textBox.append(f"Training {model_str} model...");
         try:
             if (model_str == "Convolutional"):
-                self.accuracy = 0;
-                # accuracy = model_..._training.trainRecognitionModel(self.completed, self.progressBar);
+                x = model_conv_training.modelTrainingFramework();
+                self.accuracy = x.trainModel(self.progressBar);
             elif (model_str == "Complex"):
                 self.accuracy = 0;
             else:
