@@ -39,7 +39,8 @@ class AppMainWindow(QMainWindow):
         self.layout = QVBoxLayout
         # Code
         self.setWindowTitle(WINDOW_TITLE);
-        self.setFixedSize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+        self.resize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+        #self.setFixedSize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
         self.setWindowIcon(QIcon(r.ICON_WINDOW));
         self.centreWindow();
         # Core Components

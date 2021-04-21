@@ -143,11 +143,20 @@ class AppMainContent(QWidget):
         self.hbox = QHBoxLayout();
         self.vbox = QVBoxLayout();
         self.canvas = Canvas();
+        self.canvasbox = QWidget(self);
         self.sidebox = QWidget(self);
 
         self.setLayout(self.hbox);
-        self.hbox.addWidget(self.canvas);
+        self.hbox.addWidget(self.canvasbox);
         self.hbox.addWidget(self.sidebox);
+
+        # canvasBox
+        self.canvasvbox = QVBoxLayout();
+        self.canvasbox.setLayout(self.canvasvbox);
+        self.canvasvbox.addWidget(self.canvas);
+        self.canvasvbox.addStretch(1);
+
+        # sideBox
         self.sidebox.setLayout(self.vbox);
         
         # modelGroupBox
