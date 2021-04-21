@@ -180,7 +180,7 @@ class CreateModelDialog(QDialog):
         self.textBox.append(f"Training {model_str} model...");
         try:
             if (model_str == "Convolutional"):
-                x = model_conv_training.modelTrainingFramework();
+                x = model_conv.modelTrainingFramework();
                 self.accuracy = x.trainModel(self.progressBar);
             elif (model_str == "Complex"):
                 self.accuracy = 0;
