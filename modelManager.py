@@ -186,7 +186,7 @@ class CreateModelDialog(QDialog):
                 self.accuracy = 0;
 
                 x = model_linear.modelTrainingFramework();
-                self.accuracy = x.trainModel();
+                self.accuracy = x.trainModel(self.progressBar);
 
                 #self.accuracy = model_linear.trainModel();
                 # accuracy = model_linear.trainRecognitionModel(self.completed, self.progressBar);

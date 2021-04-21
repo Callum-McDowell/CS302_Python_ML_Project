@@ -22,7 +22,8 @@ from torchvision.transforms import ToTensor, Lambda;
 # Model:
 from torch import nn, cuda;
 
-MODEL_NAME = "Linear"
+SAVE_DIR = r.MODULE_DIR + "/Model/Model_Linear/"
+MODEL_CODE = "Linear"
 
 
 #====== Hyper Parameters ======#
@@ -67,7 +68,7 @@ class Model(nn.Module):
 
 class modelTrainingFramework():
     # Wrapper class so that functions can be called on instantiated object
-    def trainModel(self):
+    def trainModel(self, progress_bar):
         #====== Datasets ======#
         trainset = datasets.MNIST(
             root="Dataset/trainset",
@@ -110,16 +111,17 @@ class modelTrainingFramework():
             # NOTE: experiment with different optimisers, not just SDG
 
         #====== Training Epochs ======#
-        print(f"Starting training with {MODEL_NAME} on device {device}\n{'=' * 24}");
+        print(f"Starting training with {MODEL_CODE} on device {device}\n{'=' * 24}");
 
         t0 = time.perf_counter()
 
         for i in range(number_of_epochs):
             print(f"Epoch {i+1}\n----------------------------")
-            self.train(loader_trainset, self.net, self.loss_fn, self.optimiser);
+            self.train(loader_trainset, self.net, self.loss_fn, self.optimiser, i, number_of_epochs, progress_bar);
             accuracy = self.test(loader_testset, self.net, self.loss_fn);
 
         t1 = time.perf_counter();
+        progress_bar.setValue(100);
         print(f"Finished in {(t1 - t0):>.2f}s.");
         print("FIN.")
 
@@ -127,12 +129,9 @@ class modelTrainingFramework():
 
 
 
-    def train(self, dataloader, model, loss_fn, optimiser):
-        # t0 = time.perf_counter();
-
-        # Generic inputs are defined as type
-        # Thus we can call generic inherited operations on them
+    def train(self, dataloader, model, loss_fn, optimiser, epochs_complete, epochs_total, progress_bar):
         size = len(dataloader.dataset);
+
         for index, (X,y) in enumerate(dataloader):
             # as we iterate over '(X,y)' 'index' (from enumerate()) tracks our progress
             
@@ -150,16 +149,20 @@ class modelTrainingFramework():
                 print(f"loss: {loss:>7f} [{progress:>5d}/{size:>5d}]");
                 # e.x. output:  "loss: 1.234567 [    0/60000]""
                 
-                torch.save(model, "Model/saves/model1.pkl");
-                torch.save(optimiser.state_dict(), "Model/saves/model1_optimiser.pkl");
-                torch.save(model.state_dict(), "Model/saves/model1_weights.pkl");
+                # Export and save model
+                torch.save(model, SAVE_DIR + "model_" + MODEL_CODE + ".pkl");
+                torch.save(optimiser.state_dict(), SAVE_DIR + "model_" + MODEL_CODE + "_optimiser.pkl");
+                torch.save(model.state_dict(), SAVE_DIR + "model_" + MODEL_CODE + "_weights.pkl");
 
-                #self.completion = (100 * index) / len(dataloader); #????? TODO
-                #progressBar.setValue(self.completion);
+                # Completion = ((dataset size * completed epochs) + (index / dataset size)) / (dataset size * epochs)
+                # We are using ratios to keep number sizes sensible.
+                completed_val = size * (epochs_complete/epochs_total);
+                in_progress_val = progress * (1/epochs_total);
+                completion = (completed_val + in_progress_val) / size;
+                # Convert completion from normalised 0->1 to 50->100
+                completion = 50 + (completion * 50);
 
-                # t1 = time.perf_counter();
-                # print(f"Training epoch took {(t1 - t0):>.2f}s.");
-                # t0 = timer.perf_counter();
+                progress_bar.setValue(int(completion));
 
 
     def test(self, dataloader, model, loss_fn):
@@ -172,7 +175,7 @@ class modelTrainingFramework():
                 test_loss += loss_fn(pred, y).item();
                 correct += (pred.argmax(1) == y).type(torch.float).sum().item();
             
-            test_loss /= size;  # equivalent to test_loss = test_loss/size;
+            test_loss /= size;      # equivalent to test_loss = test_loss/size;
             correct /= size;
             accuracy = 100*correct;
             print (f"Test Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n");
