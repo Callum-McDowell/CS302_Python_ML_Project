@@ -181,11 +181,3 @@ class AppMainWindow(QMainWindow):
                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No);
         if (confirm == QMessageBox.Yes):
           self.close();
-
-
-
-# If this module is run as main, execute the below:
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    appwin = AppMainWindow()
-    sys.exit(app.exec_())
