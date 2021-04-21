@@ -14,8 +14,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import peripheralUI
 
+# Model Linear
 import Model.Model_Linear.model_linear as model_linear
 import Model.Model_Linear.model_linear_prediction as model_linear_prediction
+# Model Convolutional
+import Model.Model_Conv.model_conv as model_conv
+import Model.Model_Conv.model_conv_prediction as model_conv_prediction
 # ...
 MODEL_LIST = ["Linear", "Convolutional", "Complex"]
 # Note: default to Linear
@@ -44,12 +48,11 @@ class modelManager():
     def predictWithModel(self, image):
         try:
             if (self.model_name == "Convolutional"):
-                pass;
-                # self.pred, self.plt = predFile.predict(image, self.model_weights_dir);
-                # return self.pred, self.plt;
+                pred, self.plot_probabilities = model_conv_prediction.predict(image, self.model_weights_dir);
+                
             elif (self.model_name == "Complex"):
                 pass;
-                # self.pred, self.plt = predFile.predict(image, self.model_weights_dir);
+                # pred, self.plot_probabilities = predFile.predict(image, self.model_weights_dir);
                 # return self.pred, self.plt;
             else:
                 pred, self.plot_probabilities = model_linear_prediction.predict(image, self.model_weights_dir);

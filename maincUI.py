@@ -169,6 +169,11 @@ class AppMainContent(QWidget):
         self.modelLabel.setFont(QFont('Sans Serif', 10));
         self.updateModelLabel();
         self.modelGroupLayout.addWidget(self.modelLabel);
+        # -- modelSelectCombo
+        self.modelSelectCombo = QComboBox();
+        self.modelSelectCombo.addItems(modelManager.MODEL_LIST);
+        self.modelSelectCombo.textActivated.connect(lambda comboEvent: self.setModelName(self.modelSelectCombo.currentText()));
+        self.modelGroupLayout.addWidget(self.modelSelectCombo);
         # -- modelWeightButton
         self.modelWeightButton = QPushButton("Model Weights", self);
         self.modelWeightButton.clicked.connect(self.changeModelWeights);
@@ -201,6 +206,10 @@ class AppMainContent(QWidget):
         self.toolsGroupLayout.addWidget(self.toggleGraphButton);
 
         self.vbox.addStretch(5);
+
+    def setModelName(self, text):
+        self.model_manager.setModelName(text);
+        self.updateModelLabel();
 
     def updateModelLabel(self):
         self.modelLabel.setText("Model: " + self.model_manager.model_name);
