@@ -12,7 +12,9 @@ import resources as r;
 import peripheralUI;
 import sys
 import canvasToMNIST
-import prediction
+import modelManager
+
+#import prediction
 import cv2
 import os
 import os.path
@@ -126,13 +128,16 @@ class AppMainContent(QWidget):
     # Core content goes here.
     def __init__(self, model=None):
         super().__init__();
+        
+        self.model = model
+        self.model_manager = modelManager.modelManager()
+        
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.canvas = Canvas()
         self.layout.addWidget(self.canvas)
         self.textBox = QTextEdit(self)
         self.textBox.setReadOnly(True)
-        self.model = model
         
         #Change model button
         changeModelButton = QPushButton('Model Weights', self)
@@ -164,15 +169,24 @@ class AppMainContent(QWidget):
             self.generateErrorBox("Error", "No canvas input to submit")
             return
 
-        #Displaying result
         try:
-            pred, self.plt = prediction.predict(img, self.model)
+            pred, self.plt = self.model_manager.predictWithModel(img);
             self.textBox.setText(str(pred))
             self.showGraphButton.show()
-        except Exception as e:
-            # If an invalid file is loaded...
-            self.generateErrorBox("Error", "Invalid Model", e)
-            return
+        except:
+            # None is returned if predict() fails.
+            pass;
+
+        #Displaying result
+        # try:
+
+        #     pred, self.plt = prediction.predict(img, self.model)
+        #     self.textBox.setText(str(pred))
+        #     self.showGraphButton.show()
+        # except Exception as e:
+        #     # If an invalid file is loaded...
+        #     self.generateErrorBox("Error", "Invalid Model", e)
+        #     return
         
     def clear(self):
         #Close plot if it's still open
@@ -190,11 +204,11 @@ class AppMainContent(QWidget):
         mngr.window.setGeometry(50,100,640, 545)
         self.plt.show()
 
-    #Change current model
     def changeModel(self):
-        modelFilename, _ = QFileDialog.getOpenFileName(self,"Please select model", "Model/","pickle files (*.pkl)")
-        if len(modelFilename) > 0:
-            self.model = modelFilename
+        self.model_manager.changeModelWeightsDir(self);
+
+    def getModelManager(self):
+        return self.model_manager;
 
     def generateErrorBox(self, title="Error", message="Error", detail="None"):
         error_box = peripheralUI.ErrorBox(title, message, detail);

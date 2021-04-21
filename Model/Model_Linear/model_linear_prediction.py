@@ -64,19 +64,25 @@ def plot_bar(probability):
     plt.title('Model Prediction Probability')
     plt.show()
 
-def predict(img):
-    trans = transforms.ToTensor()
-    model = Model()
-    model.load_state_dict(torch.load(DIR_WEIGHTS))
-    output = model(trans(img))
-    pred = output.data.max(1, keepdim=True)[1]
+def predict(img, weights_dir):
+    try:
+        trans = transforms.ToTensor()
+        model = Model()
+        model.load_state_dict(torch.load(weights_dir), strict= False)
+        # strict=False; so the dict is loaded correctly despite .module labelling from the nn.Sequential() structure
+        output = model(trans(img))
+        pred = output.data.max(1, keepdim=True)[1]
 
-    #Getting the relative probability of the predictions
-    relative_probability = output[0].tolist()
-    if min(relative_probability) < 0:
-        for value in relative_probability:
-            ind = relative_probability.index(value)
-            relative_probability[ind] = value + (-(min(output[0].tolist())))
+        #Getting the relative probability of the predictions
+        relative_probability = output[0].tolist()
+        if min(relative_probability) < 0:
+            for value in relative_probability:
+                ind = relative_probability.index(value)
+                relative_probability[ind] = value + (-(min(output[0].tolist())))
 
-    #Plot probability graph
-    plot_bar(relative_probability)
+        #Plot probability graph
+        plt = plot_bar(relative_probability)
+
+        return int(pred), plt;
+    except Exception as e:
+        print(e);
