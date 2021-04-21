@@ -5,12 +5,6 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
-DIR = "Model/saves/";
-#DIR_MODEL = DIR + "model1.pth";
-#DIR_OPTIM = DIR + "model1_optimiser.pth"
-DIR_WEIGHTS = DIR + "model1_weights.pth";
-
-
 # Define Model (for pickle import)
 class Model(nn.Module):
     def __init__(self):
@@ -45,25 +39,6 @@ class Model(nn.Module):
         return logits;
 
 
-#This function plots the probability bar graph
-def plot_bar(probability):
-    
-    #Close previous plot if it's still open
-    plt.close()
-
-    #Get array of indices 
-    index = np.arange(len(probability))
-
-    #Plot index on x-axis and probability on y-axis
-    plt.bar(index, probability)
-
-    #Add labels
-    plt.xlabel('Digit', fontsize=15)
-    plt.ylabel('Probability', fontsize=20)
-    plt.xticks(index, fontsize=8, rotation=30)
-    plt.title('Model Prediction Probability')
-    plt.show()
-
 def predict(img, weights_dir):
     try:
         trans = transforms.ToTensor()
@@ -80,9 +55,6 @@ def predict(img, weights_dir):
                 ind = relative_probability.index(value)
                 relative_probability[ind] = value + (-(min(output[0].tolist())))
 
-        #Plot probability graph
-        plt = plot_bar(relative_probability)
-
-        return int(pred), plt;
+        return int(pred), relative_probability;
     except Exception as e:
         print(e);

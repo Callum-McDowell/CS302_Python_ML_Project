@@ -178,25 +178,3 @@ class modelTrainingFramework():
             print (f"Test Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n");
 
         return accuracy;
-
-
-    #====== Run Model ======#
-    # import time;
-    # t0 = time.perf_counter();
-
-    # for i in range(number_of_epochs):
-    #     print(f"Epoch {i+1}\n----------------------------")
-    #     train(loader_trainset, net, loss_fn, optimiser);
-    #     test(loader_testset, net, loss_fn);
-
-    # Export and save model
-    # torch.save(net, "Model/saves/model1.pth");
-    # torch.save(optimiser.state_dict(), "Model/saves/model1_optimiser.pth");
-    # torch.save(net.state_dict(), "Model/saves/model1_weights.pth");
-
-    # t1 = time.perf_counter();
-    # print(f"Finished in {(t1 - t0):>.2f}s.");
-    # print("FIN.")
-
-    #accuracy=77.2% at lr=1e-2, batch=64, epoch=10
-    #accuracy=96.0% at lr=1e-1, batch=64, epoch=4

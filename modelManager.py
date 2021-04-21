@@ -8,8 +8,10 @@ import resources as r
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from torchvision import datasets, transforms;
 
+from torchvision import datasets, transforms;
+import matplotlib.pyplot as plt
+import numpy as np
 import peripheralUI
 
 import Model.Model_Linear.model_linear as model_linear
@@ -25,8 +27,9 @@ MODEL_LIST = ["Linear", "Convolutional", "Complex"]
 
 class modelManager():
     def __init__(self):
-        self.model_name = None;
+        self.model_name = MODEL_LIST[0];
         self.model_weights_dir = None;
+        self.plot_probabilities = None;
 
     def setModelName(self, name : str):
         if (isinstance(name, str)):
@@ -49,12 +52,42 @@ class modelManager():
                 # self.pred, self.plt = predFile.predict(image, self.model_weights_dir);
                 # return self.pred, self.plt;
             else:
-                pred, plt = model_linear_prediction.predict(image, self.model_weights_dir);
-                return pred, plt;
+                pred, self.plot_probabilities = model_linear_prediction.predict(image, self.model_weights_dir);
+                
+            plot = self.createBarPlot();    
+            return pred, plot;
         except Exception as e:
             # If an invalid file is loaded...
             self.generateErrorBox("Error", "Invalid Model", e)
-            return
+            return;
+
+    def createBarPlot(self):
+        plot = self.plot_bar(self.plot_probabilities);
+        plt.show();
+
+        mngr = plt.get_current_fig_manager();
+        mngr.window.setGeometry(50,100, 600,600);
+        return plot;
+
+    def plot_bar(self, probability):
+        plt.close() # Close previous plot if it's still open
+
+        # Normalise to 1 to get % values
+        temp = [(100 * float(i))/sum(probability) for i in probability];
+        probability = temp;
+
+        # Get array of indices 
+        index = np.arange(len(probability)) 
+        # Plot index on x-axis and probability on y-axis
+        plot = plt.bar(index, probability)
+
+        #Add labels
+        plt.xlabel('Digit', fontsize=15)
+        plt.ylabel('Probability', fontsize=20)
+        plt.xticks(index, fontsize=8, rotation=30)
+        plt.title('Model Prediction Probability')
+        plt.show()
+        return plot;
 
     def generateErrorBox(self, title="Error", message="Error", detail="None"):
         error_box = peripheralUI.ErrorBox(title, message, detail);

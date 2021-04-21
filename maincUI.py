@@ -131,80 +131,109 @@ class AppMainContent(QWidget):
         
         self.model = model
         self.model_manager = modelManager.modelManager()
-        
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        self.canvas = Canvas()
-        self.layout.addWidget(self.canvas)
-        self.textBox = QTextEdit(self)
-        self.textBox.setReadOnly(True)
-        
-        #Change model button
-        changeModelButton = QPushButton('Model Weights', self)
-        changeModelButton.move(450, 50)
-        changeModelButton.clicked.connect(self.changeModel)
 
-        #Clear button
-        clearButton = QPushButton('Clear', self)
-        clearButton.move(450, 100)
-        clearButton.clicked.connect(self.clear)
-    
-        #Submit button
-        submitButton = QPushButton('Submit', self)
-        submitButton.move(450, 150)
-        submitButton.clicked.connect(self.submit)
+        # hbox: [ canvas, sidebox: [vbox: [...]] ]
 
-        #Displaying prediction and probability graph
-        self.textBox.move(450, 200)
-        self.showGraphButton =  QPushButton('Show graph', self)
-        self.showGraphButton.move(450, 250)
-        self.showGraphButton.hide()
-        self.showGraphButton.clicked.connect(self.showPlot)
+        # | hbox:   |  sidebox: |
+        # |         | --------- |
+        # | canvas  |  model    |
+        # |         | --------- |
+        # |         |  tools    |
+
+        self.hbox = QHBoxLayout();
+        self.vbox = QVBoxLayout();
+        self.canvas = Canvas();
+        self.sidebox = QWidget(self);
+
+        self.setLayout(self.hbox);
+        self.hbox.addWidget(self.canvas);
+        self.hbox.addWidget(self.sidebox);
+        self.sidebox.setLayout(self.vbox);
+        
+        # modelGroupBox
+        self.modelGroup = QGroupBox("Model Options");
+        self.modelGroupLayout = QVBoxLayout();
+        self.modelGroup.setLayout(self.modelGroupLayout);
+        self.vbox.addWidget(self.modelGroup);
+        # -- modelLabel
+        self.modelLabel = QLabel();
+        self.modelLabel.setFont(QFont('Sans Serif', 10));
+        self.updateModelLabel();
+        self.modelGroupLayout.addWidget(self.modelLabel);
+        # -- modelWeightButton
+        self.modelWeightButton = QPushButton("Model Weights", self);
+        self.modelWeightButton.clicked.connect(self.changeModelWeights);
+        self.modelGroupLayout.addWidget(self.modelWeightButton);
+
+        self.vbox.addStretch(1);
+
+        # toolsGroupBox
+        self.toolsGroup = QGroupBox("Tools");
+        self.toolsGroupLayout = QVBoxLayout();
+        self.toolsGroup.setLayout(self.toolsGroupLayout);
+        self.vbox.addWidget(self.toolsGroup);
+        # -- clearButton
+        self.clearButton = QPushButton("Clear", self);
+        self.clearButton.clicked.connect(self.clear);
+        self.toolsGroupLayout.addWidget(self.clearButton);
+        # -- predictionLabel
+        self.predLabel = QLabel(self);
+        self.predLabel.setFont(QFont('Sans Serif', 10));
+        self.setPredLabel("");
+        self.toolsGroupLayout.addWidget(self.predLabel);
+        # -- submitButton
+        self.submitButton = QPushButton("Submit", self);
+        self.submitButton.clicked.connect(self.submit);
+        self.toolsGroupLayout.addWidget(self.submitButton);
+        # -- showGraphButton
+        self.toggleGraphButton =  QPushButton('Hide/Show Graph', self);
+        self.toggleGraphButton.hide();
+        self.toggleGraphButton.clicked.connect(self.togglePlot);
+        self.toolsGroupLayout.addWidget(self.toggleGraphButton);
+
+        self.vbox.addStretch(5);
+
+    def updateModelLabel(self):
+        self.modelLabel.setText("Model: " + self.model_manager.model_name);
+
+    def setPredLabel(self, text):
+        self.predLabel.setText("Predicted value is: <b>" + text + "</b>");
 
     def submit(self):
         #Exception would be executed if no input is found
         try:
-            img = self.canvas.submit()
+            img = self.canvas.submit();
+            self.updateModelLabel();
         except:
-            self.generateErrorBox("Error", "No canvas input to submit")
-            return
+            self.generateErrorBox("Error", "No canvas input to submit");
+            return;
 
         try:
-            pred, self.plt = self.model_manager.predictWithModel(img);
-            self.textBox.setText(str(pred))
-            self.showGraphButton.show()
+            pred, self.plot = self.model_manager.predictWithModel(img);
+            self.setPredLabel(str(pred));
+            self.toggleGraphButton.show();
         except:
             # None is returned if predict() fails.
-            pass;
+            self.changeModelWeights();
 
-        #Displaying result
-        # try:
-
-        #     pred, self.plt = prediction.predict(img, self.model)
-        #     self.textBox.setText(str(pred))
-        #     self.showGraphButton.show()
-        # except Exception as e:
-        #     # If an invalid file is loaded...
-        #     self.generateErrorBox("Error", "Invalid Model", e)
-        #     return
-        
     def clear(self):
         #Close plot if it's still open
         try:
-            self.plt.close()
+            plt.close();
         except Exception:
-            pass
+            pass;
         finally:
-            self.textBox.setText("")
-            self.canvas.clear()
+            self.setPredLabel("");
+            self.canvas.clear();
 
     #Show probability graph when the "show graph" button is clicked
-    def showPlot(self):
-        mngr = self.plt.get_current_fig_manager()
-        mngr.window.setGeometry(50,100,640, 545)
-        self.plt.show()
+    def togglePlot(self):
+        if (len(plt.get_fignums()) > 0):
+            plt.close()
+        else:
+            self.model_manager.createBarPlot();
 
-    def changeModel(self):
+    def changeModelWeights(self):
         self.model_manager.changeModelWeightsDir(self);
 
     def getModelManager(self):
