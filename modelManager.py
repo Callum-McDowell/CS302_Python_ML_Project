@@ -75,6 +75,8 @@ class modelManager():
     def plot_bar(self, probability):
         plt.close() # Close previous plot if it's still open
 
+        # Crop classification option for 0->9 (if convolutional model is configured incorrectly)
+        probability = probability[:10] 
         # Normalise to 1 to get % values
         temp = [(100 * float(i))/sum(probability) for i in probability];
         probability = temp;
