@@ -20,8 +20,11 @@ import Model.Model_Linear.model_linear_prediction as model_linear_prediction
 # Model Convolutional
 import Model.Model_Conv.model_conv as model_conv
 import Model.Model_Conv.model_conv_prediction as model_conv_prediction
+# Model Original
+import Model.Model_Original.model_original as model_original
+import Model.Model_Original.model_original_prediction as model_original_prediction
 # ...
-MODEL_LIST = ["Linear", "Convolutional", "Complex"]
+MODEL_LIST = ["Linear", "Convolutional", "Original"]
 # Note: default to Linear
 
 
@@ -50,11 +53,10 @@ class modelManager():
             if (self.model_name == "Convolutional"):
                 pred, self.plot_probabilities = model_conv_prediction.predict(image, self.model_weights_dir);
 
-            elif (self.model_name == "Complex"):
-                pass;
-                # pred, self.plot_probabilities = predFile.predict(image, self.model_weights_dir);
-                # return self.pred, self.plt;
-            else:
+            elif (self.model_name == "Original"):
+                pred, self.plot_probabilities = model_original_prediction.predict(image, self.model_weights_dir);
+                
+            else: # Linear
                 pred, self.plot_probabilities = model_linear_prediction.predict(image, self.model_weights_dir);
                 
             plot = self.createBarPlot();    
@@ -184,17 +186,13 @@ class CreateModelDialog(QDialog):
             if (model_str == "Convolutional"):
                 x = model_conv.modelTrainingFramework();
                 self.accuracy = x.trainModel(self.progressBar);
-            elif (model_str == "Complex"):
-                self.accuracy = 0;
+            elif (model_str == "Original"):
+                x = model_original.modelTrainingFramework();
+                self.accuracy = x.trainModel(self.progressBar);
             else:
                 # default to linear model
-                self.accuracy = 0;
-
                 x = model_linear.modelTrainingFramework();
                 self.accuracy = x.trainModel(self.progressBar);
-
-                #self.accuracy = model_linear.trainModel();
-                # accuracy = model_linear.trainRecognitionModel(self.completed, self.progressBar);
 
         except Exception as e:
             self.textBox.append("Error training the model. Make sure the model has been downloaded first by pressing the 'Download Dataset' button");
