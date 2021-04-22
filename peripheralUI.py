@@ -214,21 +214,28 @@ class ViewImagesDlg(QDialog):
         self.GRID_X = 5;
         self.GRID_Y = 10;
         self.imageIndex = self.populate(self.imageIndex);
-        self.gallery_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.gallery_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.gallery_scroll.setWidgetResizable(True)
+        self.gallery_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn);
+        self.gallery_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn);
+        self.gallery_scroll.setWidgetResizable(True);
         # -- Button to show previous image
-        previousButton = QPushButton("&Previous", self)
-        previousButton.clicked.connect(self.showPrevImg)
-        self.btnbox.addWidget(previousButton)
+        self.previousButton = QPushButton("&Previous", self);
+        self.previousButton.clicked.connect(self.showPrevImg);
+        self.btnbox.addWidget(self.previousButton);
+        # -- Label to show progress
+        self.progressLabel = QLabel();
+        self.progressLabel.setAlignment(Qt.AlignHCenter);
+        self.updateProgressLabel();
+        self.btnbox.addWidget(self.progressLabel);
         # -- Button to show next image
-        nextButton = QPushButton("&Next", self)
-        nextButton.clicked.connect(self.showNextImg)
-        self.btnbox.addWidget(nextButton)
+        self.nextButton = QPushButton("&Next", self);
+        self.nextButton.clicked.connect(self.showNextImg);
+        self.btnbox.addWidget(self.nextButton);
 
         self.setWindowTitle("Dataset Viewer")
-        self.setGeometry(600, 600, (120 + 28*5* self.GRID_X), (120 + 28*5*5));
+        self.setGeometry(200, 200, (120 + 28*5* self.GRID_X), (120 + 28*5*5));
 
+    def updateProgressLabel(self):
+        self.progressLabel.setText(f"{self.imageIndex} / {self.num_images}");
 
     def populate(self, index):
         # Generate positions tuple
@@ -266,11 +273,17 @@ class ViewImagesDlg(QDialog):
     def showNextImg(self):
         self.imageIndex = self.populate(self.imageIndex)
 
+        self.updateProgressLabel();
+
     #Method to show previous images when previous button is clicked
     def showPrevImg(self):
         temp = self.imageIndex - (2 * self.GRID_X * self.GRID_Y);
         if (temp < 0): temp = 0;
+        num_max = self.num_images - 1 - (self.GRID_X * self.GRID_Y);
+        if (temp >= num_max): temp = num_max;
         self.imageIndex = self.populate(temp)
+
+        self.updateProgressLabel();
 
     #Converting directly to pixmap distorts the image, therefore we save it first before reading it as a cv2 img
     def convertToPixmap(self, img):
