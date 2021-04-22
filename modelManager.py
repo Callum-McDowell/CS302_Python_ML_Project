@@ -17,6 +17,9 @@ import peripheralUI
 # Model Linear
 import Model.Model_Linear.model_linear as model_linear
 import Model.Model_Linear.model_linear_prediction as model_linear_prediction
+# Model Linear Momentum
+import Model.Model_Linear_Momentum.model_linear_momentum as model_linear_momentum
+import Model.Model_Linear_Momentum.model_linear_momentum_prediction as model_linear_momentum_prediction
 # Model Convolutional
 import Model.Model_Conv.model_conv as model_conv
 import Model.Model_Conv.model_conv_prediction as model_conv_prediction
@@ -24,7 +27,7 @@ import Model.Model_Conv.model_conv_prediction as model_conv_prediction
 import Model.Model_Original.model_original as model_original
 import Model.Model_Original.model_original_prediction as model_original_prediction
 # ...
-MODEL_LIST = ["Linear", "Convolutional", "Original"]
+MODEL_LIST = ["Linear", "Linear Momentum", "Convolutional", "Original"]
 # Note: default to Linear
 
 
@@ -35,7 +38,7 @@ MODEL_LIST = ["Linear", "Convolutional", "Original"]
 class modelManager():
     def __init__(self):
         self.model_name = MODEL_LIST[0];
-        self.model_weights_dir = None;
+        self.model_weights_dir = "Model/";  # must be initialised as is base for QFileDialog
         self.plot_probabilities = None;
 
     def setModelName(self, name : str):
@@ -44,7 +47,7 @@ class modelManager():
 
     def changeModelWeightsDir(self, owner):
         # Owner is QWidget to act as parent
-        weights_dir, _ = QFileDialog.getOpenFileName(owner,"Please select model weights", "Model/","pickle files (*.pkl)")
+        weights_dir, _ = QFileDialog.getOpenFileName(owner,"Please select model weights", self.model_weights_dir ,"pickle files (*.pkl)")
         if (len(weights_dir) > 0):
             self.model_weights_dir = weights_dir;
 
@@ -55,6 +58,9 @@ class modelManager():
 
             elif (self.model_name == "Original"):
                 pred, self.plot_probabilities = model_original_prediction.predict(image, self.model_weights_dir);
+
+            elif (self.model_name == "Linear Momentum"):
+                pred, self.plot_probabilities = model_linear_momentum_prediction.predict(image, self.model_weights_dir);
                 
             else: # Linear
                 pred, self.plot_probabilities = model_linear_prediction.predict(image, self.model_weights_dir);
@@ -186,9 +192,15 @@ class CreateModelDialog(QDialog):
             if (model_str == "Convolutional"):
                 x = model_conv.modelTrainingFramework();
                 self.accuracy = x.trainModel(self.progressBar);
+
             elif (model_str == "Original"):
                 x = model_original.modelTrainingFramework();
                 self.accuracy = x.trainModel(self.progressBar);
+
+            elif (model_str == "Linear Momentum"):
+                x = model_linear_momentum.modelTrainingFramework();
+                self.accuracy = x.trainModel(self.progressBar);
+
             else:
                 # default to linear model
                 x = model_linear.modelTrainingFramework();
