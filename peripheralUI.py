@@ -181,8 +181,6 @@ class ErrorBox(QMessageBox):
 class ViewImagesDlg(QDialog):
     def __init__(self, datasetType):
         super().__init__()
-        self.setWindowTitle("Dataset Viewer")
-
         #Determining which dataset to view
         if datasetType == "training":
             self.filePath = 'MNIST/raw/train-images-idx3-ubyte.gz'
@@ -191,27 +189,63 @@ class ViewImagesDlg(QDialog):
             self.filePath = 'MNIST/raw/t10k-images-idx3-ubyte.gz'
             self.num_images = 10000
 
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-
         #Decompressing the .gz file and appending its contents to a list
         self.imgList = self.generateImgList()
         self.imageIndex = 0
 
-        #Adding image as a widget
-        self.img = QLabel(self)
-        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
-        self.layout.addWidget(self.img)
+        # Layout
+        self.vbox = QVBoxLayout();
+        self.btnbox = QHBoxLayout();
+        self.btnbox_widget = QWidget();
+        self.btnbox_widget.setLayout(self.btnbox);
 
-        #Button to show next image
-        nextButton = QPushButton("&Next", self)
-        nextButton.clicked.connect(self.showNextImg)
-        self.layout.addWidget(nextButton)
+        self.gallery = QGridLayout();
+        self.gallery_widget = QWidget();
+        self.gallery_widget.setLayout(self.gallery);
 
-        #Button to show previous image
+        self.gallery_scroll = QScrollArea();
+        self.gallery_scroll.setWidget(self.gallery_widget);
+
+        self.setLayout(self.vbox);
+        self.vbox.addWidget(self.gallery_scroll);
+        self.vbox.addWidget(self.btnbox_widget);
+
+        # -- Gallery
+        self.GRID_X = 5;
+        self.GRID_Y = 10;
+        self.imageIndex = self.populate(self.imageIndex);
+        self.gallery_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.gallery_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.gallery_scroll.setWidgetResizable(True)
+        # -- Button to show previous image
         previousButton = QPushButton("&Previous", self)
         previousButton.clicked.connect(self.showPrevImg)
-        self.layout.addWidget(previousButton)
+        self.btnbox.addWidget(previousButton)
+        # -- Button to show next image
+        nextButton = QPushButton("&Next", self)
+        nextButton.clicked.connect(self.showNextImg)
+        self.btnbox.addWidget(nextButton)
+
+        self.setWindowTitle("Dataset Viewer")
+        self.setGeometry(600, 600, (120 + 28*5* self.GRID_X), (120 + 28*5*5));
+
+
+    def populate(self, index):
+        # Generate positions tuple
+        positions = [(x, y) for x in range(self.GRID_X) for y in range(self.GRID_Y)]
+        
+        # Add images to the grid:
+        for x, y in positions:
+            #pass;
+            self.gallery.addWidget(self.generateImage(index), y, x);
+            index += 1;
+
+        return index;
+
+    def generateImage(self, index):
+        img = QLabel();
+        img.setPixmap(self.convertToPixmap(self.imgList[index]));
+        return img;
 
 
     def generateImgList(self):
@@ -228,21 +262,15 @@ class ViewImagesDlg(QDialog):
 
         return data
 
-    #Method to show next image when next button is clicked
+    #Method to show next images when next button is clicked
     def showNextImg(self):
-        self.imageIndex += 1
-        if self.imageIndex > self.num_images - 1:
-            self.imageIndex = 0
-        print(self.imageIndex)
-        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
-    
-    #Method to show previous image when previous button is clicked
+        self.imageIndex = self.populate(self.imageIndex)
+
+    #Method to show previous images when previous button is clicked
     def showPrevImg(self):
-        self.imageIndex -= 1
-        if self.imageIndex < 0:
-            self.imageIndex = self.num_images - 1
-        print(self.imageIndex)
-        self.img.setPixmap(self.convertToPixmap(self.imgList[self.imageIndex]))
+        temp = self.imageIndex - (2 * self.GRID_X * self.GRID_Y);
+        if (temp < 0): temp = 0;
+        self.imageIndex = self.populate(temp)
 
     #Converting directly to pixmap distorts the image, therefore we save it first before reading it as a cv2 img
     def convertToPixmap(self, img):

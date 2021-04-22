@@ -3,8 +3,11 @@ Our required libraries:
 - Python 3.7 or above.
 - PyQt5 Python GUI (v5.15.4)
 - PyTorch for DNN (v1.8)
-- scikit-image (v0.18.1)
 - mkl-service (v2.3.0)
+
+- opencv-python
+- matplotlib
+- scikit-image (v0.18.1)
 
 
 Dataset can vary, but we are using the MNIST Dataset.
