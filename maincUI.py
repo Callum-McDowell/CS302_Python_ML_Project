@@ -244,7 +244,7 @@ class AppMainContent(QWidget):
             self.setPredLabel("");
             self.canvas.clear();
 
-    #Show probability graph when the "show graph" button is clicked
+    #Toggle probability graph when the "Hide/Show graph" button is clicked
     def togglePlot(self):
         if (len(plt.get_fignums()) > 0):
             plt.close()

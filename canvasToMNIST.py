@@ -33,7 +33,7 @@ def cropInput(img):
 #MNIST dataset dimensions can be found here: https://paperswithcode.com/dataset/mnist
 def convertToMNIST(img):
     rows,cols = img.shape
-    #Image needs to fit into a 20x20 pixel box to be similar to the MNIST dataset
+    #Image needs to fit into a 20x20 pixel box to be similar to the MNIST dataset, however we need to keep aspect ratio
     if rows > cols:
         factor = 20.0/rows
         rows = 20
