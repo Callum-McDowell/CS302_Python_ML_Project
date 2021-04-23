@@ -34,7 +34,8 @@ class Canvas(QWidget):
      #Setting title
         self.setWindowTitle("Please write a number")
 
-        self.setFixedSize(400, 400)
+        #self.setFixedSize(400, 400)
+        self.resize(400, 400)
   
         #Creating image object
         self.image = QImage(self.size(), QImage.Format_RGB32)
@@ -154,7 +155,7 @@ class AppMainContent(QWidget):
         self.canvasvbox = QVBoxLayout();
         self.canvasbox.setLayout(self.canvasvbox);
         self.canvasvbox.addWidget(self.canvas);
-        self.canvasvbox.addStretch(1);
+        #self.canvasvbox.addStretch(1);
 
         # sideBox
         self.sidebox.setLayout(self.vbox);
