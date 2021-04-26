@@ -84,7 +84,7 @@ class modelManager():
 
     def createBarPlot(self):
         plot = self.plot_bar(self.plot_probabilities);
-        plt.show();
+        plt.savefig("probability_graph.png")
 
         mngr = plt.get_current_fig_manager();
         mngr.window.setGeometry(50,100, 600,600);
@@ -109,7 +109,6 @@ class modelManager():
         plt.ylabel('Probability', fontsize=20)
         plt.xticks(index, fontsize=8, rotation=30)
         plt.title('Model Prediction Probability')
-        plt.show()
         return plot;
 
     def generateErrorBox(self, title="Error", message="Error", detail="None"):

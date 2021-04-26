@@ -34,8 +34,8 @@ class AppMainWindow(QMainWindow):
 
     def initUI(self):
         # Defines
-        WINDOW_SIZE_X = 600;
-        WINDOW_SIZE_Y = 400;
+        WINDOW_SIZE_X = 1000;
+        WINDOW_SIZE_Y = 800;
         WINDOW_TITLE = "CNN Handwriting Recogniser";
         self.layout = QVBoxLayout
         # Code
