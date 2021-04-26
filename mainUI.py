@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import *;
 from PyQt5.QtGui import QIcon;
 #from PyQt5.QtCore import Qt;
 
+import time
 import resources as r;
 import maincUI as c;
 import peripheralUI;
@@ -49,7 +50,7 @@ class AppMainWindow(QMainWindow):
         self.toolbar = self.initMainToolBar();
         self.statusbar = self.initStatusBar();
 
-        AppMainWindow.main_content = c.AppMainContent();
+        AppMainWindow.main_content = c.AppMainContent(WINDOW_SIZE_X, WINDOW_SIZE_Y);
         self.setCentralWidget(AppMainWindow.main_content);
 
         self.show();

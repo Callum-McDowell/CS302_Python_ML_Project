@@ -28,18 +28,15 @@ class Canvas(QWidget):
     # Is an important part of the main content window, and is added/
     # removed when the model is ready/unready to be used.
 
-    def __init__(self):
+    def __init__(self, sizeX, sizeY):
         super().__init__();
 
-     #Setting title
-        self.setWindowTitle("Please write a number")
-
-        #self.setFixedSize(400, 400)
-        self.resize(400, 400)
+        self.setFixedSize(400, 400)
   
         #Creating image object
         self.image = QImage(self.size(), QImage.Format_RGB32)
         self.image.fill(Qt.white)
+
 
         #drawing flag
         self.drawing = False
@@ -97,9 +94,9 @@ class Canvas(QWidget):
     def paintEvent(self, event):
         #Create a canvas
         canvasPainter = QPainter(self)
+        #canvasPainter.scale(self.width(), self.height())
           
         canvasPainter.drawImage(self.rect(), self.image, self.image.rect())
-  
   
     #Method for clearing everything on canvas
     def clear(self):
@@ -123,11 +120,12 @@ class Canvas(QWidget):
         img = canvasToMNIST.convertToMNIST(img)
         return img
 
+
 #====== Main Content ======#
 class AppMainContent(QWidget):
     # Our 'central widget' for the MainWindow frame.
     # Core content goes here.
-    def __init__(self, model=None):
+    def __init__(self, sizeX, sizeY, model=None):
         super().__init__();
         
         self.model = model
@@ -143,7 +141,7 @@ class AppMainContent(QWidget):
 
         self.hbox = QHBoxLayout();
         self.vbox = QVBoxLayout();
-        self.canvas = Canvas();
+        self.canvas = Canvas(sizeX, sizeY);
         self.canvasbox = QWidget(self);
         self.sidebox = QWidget(self);
 
