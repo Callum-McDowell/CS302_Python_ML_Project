@@ -17,7 +17,7 @@ from PyQt5.QtGui import QIcon;
 import resources as r;
 import maincUI as c;
 import peripheralUI;
-import modelManager;
+import ModelManager;
 
 
 
@@ -148,7 +148,7 @@ class AppMainWindow(QMainWindow):
 
     def modelTraining(self):
         try:
-            train_dlg = modelManager.CreateModelDialog(parent= self, manager= self.centralWidget().model_manager);
+            train_dlg = ModelManager.ModelDialog(parent= self, manager= self.centralWidget().model_manager);
         except Exception as e:
             print(e);
             return;

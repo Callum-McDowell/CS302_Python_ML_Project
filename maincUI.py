@@ -12,7 +12,7 @@ import resources as r;
 import peripheralUI;
 import sys
 import canvasToMNIST
-import modelManager
+import ModelManager
 
 #import prediction
 import cv2
@@ -131,7 +131,7 @@ class AppMainContent(QWidget):
         super().__init__();
         
         self.model = model
-        self.model_manager = modelManager.modelManager()
+        self.model_manager = ModelManager.ModelManager()
 
         # hbox: [ canvas, sidebox: [vbox: [...]] ]
 
@@ -172,7 +172,7 @@ class AppMainContent(QWidget):
         self.modelGroupLayout.addWidget(self.modelLabel);
         # -- modelSelectCombo
         self.modelSelectCombo = QComboBox();
-        self.modelSelectCombo.addItems(modelManager.MODEL_LIST);
+        self.modelSelectCombo.addItems(ModelManager.MODEL_LIST);
         self.modelSelectCombo.textActivated.connect(lambda comboEvent: self.setModelName(self.modelSelectCombo.currentText()));
         self.modelGroupLayout.addWidget(self.modelSelectCombo);
         # -- modelWeightButton
