@@ -13,6 +13,8 @@ from torchvision import datasets, transforms;
 import matplotlib.pyplot as plt
 import numpy as np
 import peripheralUI
+import pandas as pd
+import os
 
 # Model Linear
 import Model.Model_Linear.model_linear as model_linear
@@ -37,33 +39,41 @@ MODEL_LIST = ["Linear", "Linear Momentum", "Convolutional", "Original"]
 
 class modelManager():
     def __init__(self):
+        self.model_details = pd.read_json("model_config.json")["models"]
         self.model_name = MODEL_LIST[0];
-        self.model_weights_dir = "Model/";  # must be initialised as is base for QFileDialog
+        self.model_weights_folder = "Model/"+self.model_details[self.model_name];  # must be initialised as is base for QFileDialog
+        for filename in os.listdir(self.model_weights_folder):
+            if filename.endswith("_weights.pkl"):
+                self.model_weights_file = self.model_weights_folder+ "/"+filename;
         self.plot_probabilities = None;
 
     def setModelName(self, name : str):
         if (isinstance(name, str)):
             self.model_name = name;
+            self.model_weights_folder = "Model/"+self.model_details[self.model_name];
+            for filename in os.listdir(self.model_weights_folder):
+                if filename.endswith("_weights.pkl"):
+                    self.model_weights_file = self.model_weights_folder+ "/"+filename;
 
     def changeModelWeightsDir(self, owner):
         # Owner is QWidget to act as parent
-        weights_dir, _ = QFileDialog.getOpenFileName(owner,"Please select model weights", self.model_weights_dir ,"pickle files (*.pkl)")
+        weights_dir, _ = QFileDialog.getOpenFileName(owner,"Please select model weights", self.model_weights_file ,"pickle files (*.pkl)")
         if (len(weights_dir) > 0):
-            self.model_weights_dir = weights_dir;
+            self.model_weights_file = weights_dir;
 
     def predictWithModel(self, image):
         try:
             if (self.model_name == "Convolutional"):
-                pred, self.plot_probabilities = model_conv_prediction.predict(image, self.model_weights_dir);
+                pred, self.plot_probabilities = model_conv_prediction.predict(image, self.model_weights_file);
 
             elif (self.model_name == "Original"):
-                pred, self.plot_probabilities = model_original_prediction.predict(image, self.model_weights_dir);
+                pred, self.plot_probabilities = model_original_prediction.predict(image, self.model_weights_file);
 
             elif (self.model_name == "Linear Momentum"):
-                pred, self.plot_probabilities = model_linear_momentum_prediction.predict(image, self.model_weights_dir);
+                pred, self.plot_probabilities = model_linear_momentum_prediction.predict(image, self.model_weights_file);
                 
             else: # Linear
-                pred, self.plot_probabilities = model_linear_prediction.predict(image, self.model_weights_dir);
+                pred, self.plot_probabilities = model_linear_prediction.predict(image, self.model_weights_file);
                 
             plot = self.createBarPlot();    
             return pred, plot;
