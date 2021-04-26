@@ -61,3 +61,84 @@ def predict(img, weights_dir):
         return int(pred), relative_probability;
     except Exception as e:
         print(e);
+
+
+#====== Prediction, Recall, and F1 metrics version of test() ======#
+# def test(self, dataloader, model, loss_fn):
+#         size = len(dataloader.dataset);
+#         test_loss, correct = 0, 0;
+        
+#         # Lists of 10x1 arrays, where labels are used to index.
+#         true_positive = [0] * 10;
+#         false_positive = [0] * 10;
+#         false_negative = [0] * 10;
+#         sum_tp = [0] * 10;
+#         sum_fp = [0] * 10;
+#         sum_fn = [0] * 10;
+
+#         with torch.no_grad():       # disable learning; no back propagation
+#             for X, y in dataloader:
+#                 pred = model(X);
+#                 test_loss += loss_fn(pred, y).item();
+#                 correct += (pred.argmax(1) == y).type(torch.float).sum().item();
+                
+#                 #== Precision and Recall Metrics ==#                
+#                 # Note that y is a tensor of the labels
+#                 # pred.argmax(1) is a 1D tensor of the predictions made this minibatch
+#                 # (pred.argmax(1) == y) is a bool mask that is 1 where the prediction is correct
+#                 pred_1D = pred.argmax(1);
+#                 for index, l in enumerate(pred_1D):
+#                     if (l == y[index]): # if (prediction correct):
+#                       true_positive[y[index].item()] += 1;
+#                     else:
+#                       false_negative[y[index].item()] += 1;
+#                       false_positive[l.item()] += 1;
+
+#                 for i in range(10):
+#                     try:
+#                       prec = (true_positive[i] / (true_positive[i] + false_positive[i]) );
+#                     except ZeroDivisionError:
+#                       pass;
+#                     try:
+#                       rec = (true_positive[i] / (true_positive[i] + false_negative[i]) );
+#                     except ZeroDivisionError:
+#                       pass;
+#                     # print(f"Precision[{i}] = { prec * 100 :>0.2f}%");
+#                     # print(f"Recall[{i}] = { rec * 100 :>0.2f}%");
+#                 # prec_total = sum(true_positive) / (sum(true_positive) + sum(false_positive));
+#                 # rec_total = sum(true_positive) / (sum(true_positive) + sum(false_negative));
+#                 # print(f"Precision = { prec_total * 100 :>0.2f}");
+#                 # print(f"Recall = { rec_total * 100 :>0.2f}");
+
+#                 for j in range(10):
+#                     sum_tp[j] += true_positive[j];
+#                     sum_fp[j] += false_positive[j];
+#                     sum_fn[j] += false_negative[j];
+#                 true_positive = [0] * 10;
+#                 false_positive = [0] * 10;
+#                 false_negative = [0] * 10;
+            
+#             test_loss /= size;      # equivalent to test_loss = test_loss/size;
+#             correct /= size;
+#             accuracy = 100*correct;
+#             print (f"Test Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f} \n");
+
+#             prec_total = sum(sum_tp) / (sum(sum_tp) + sum(sum_fp));
+#             rec_total = sum(sum_tp) / (sum(sum_tp) + sum(sum_fn));
+#             print(f"Total Precision = { prec_total * 100 :>0.2f}");
+#             print(f"Total Recall = { rec_total * 100 :>0.2f}");
+
+#             print("\nPrecision by class:");
+#             for j in range(10):
+#             try:
+#                 print(f"{j} | {sum_tp[j]/(sum_tp[j] + sum_fp[j])}");
+#             except ZeroDivisionError:
+#                 print(f"{j} | missing");
+#             print("\nRecall by class:");
+#             for j in range(10):
+#             try:
+#                 print(f"{j} | {sum_tp[j]/(sum_tp[j] + sum_fn[j])}");
+#             except ZeroDivisionError:
+#                 print(f"{j} | missing");
+
+#         return accuracy;
