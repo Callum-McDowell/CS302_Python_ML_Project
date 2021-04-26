@@ -50,7 +50,7 @@ class AppMainWindow(QMainWindow):
         self.toolbar = self.initMainToolBar();
         self.statusbar = self.initStatusBar();
 
-        AppMainWindow.main_content = c.AppMainContent(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+        AppMainWindow.main_content = c.AppMainContent();
         self.setCentralWidget(AppMainWindow.main_content);
 
         self.show();

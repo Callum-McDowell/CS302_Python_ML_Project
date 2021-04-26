@@ -13,6 +13,7 @@ import peripheralUI;
 import sys
 import canvasToMNIST
 import modelManager
+import matplotlib.pyplot as plt
 
 #import prediction
 import cv2
@@ -28,7 +29,7 @@ class Canvas(QWidget):
     # Is an important part of the main content window, and is added/
     # removed when the model is ready/unready to be used.
 
-    def __init__(self, sizeX, sizeY):
+    def __init__(self):
         super().__init__();
 
         self.setFixedSize(600, 800)
@@ -41,8 +42,8 @@ class Canvas(QWidget):
         #drawing flag
         self.drawing = False
         self.drawing_allowed = False;
-        #brush size
-        self.brushSize = 10
+        #brush size (ideal brush size to maximize image quality after processing)
+        self.brushSize = 20
         #color
         self.brushColor = Qt.black
   
@@ -94,7 +95,6 @@ class Canvas(QWidget):
     def paintEvent(self, event):
         #Create a canvas
         canvasPainter = QPainter(self)
-        #canvasPainter.scale(self.width(), self.height())
           
         canvasPainter.drawImage(self.rect(), self.image, self.image.rect())
   
@@ -125,7 +125,7 @@ class Canvas(QWidget):
 class AppMainContent(QWidget):
     # Our 'central widget' for the MainWindow frame.
     # Core content goes here.
-    def __init__(self, sizeX, sizeY, model=None):
+    def __init__(self, model=None):
         super().__init__();
         
         self.model = model
@@ -141,7 +141,7 @@ class AppMainContent(QWidget):
 
         self.hbox = QHBoxLayout();
         self.vbox = QVBoxLayout();
-        self.canvas = Canvas(sizeX, sizeY);
+        self.canvas = Canvas();
         self.canvasbox = QWidget(self);
         self.sidebox = QWidget(self);
 
