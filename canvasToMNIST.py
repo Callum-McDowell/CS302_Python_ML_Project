@@ -1,5 +1,3 @@
-# Mazen Darwish
-
 # This file contains all the functions necessary to process the canvas input
 # Canvas input needs to be processed and made to be similar to the training data for maximum accuracy
 

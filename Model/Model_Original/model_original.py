@@ -1,5 +1,3 @@
-# Callum McDowell - 22nd April 2021
-
 #====== Libraries ======#
 import resources as r
 from PyQt5.QtWidgets import *
@@ -56,7 +54,7 @@ class modelTrainingFramework():
     def trainModel(self, progress_bar):
         #====== Datasets ======#
         trainset = datasets.MNIST(
-            root="Dataset/trainset",
+            root="",
             train= True,
             download= True,
             transform= ToTensor()
@@ -69,7 +67,7 @@ class modelTrainingFramework():
         );
 
         testset = datasets.MNIST(
-            root= "Dataset/testset",
+            root= "",
             train= False,
             download= True,
             transform= ToTensor()

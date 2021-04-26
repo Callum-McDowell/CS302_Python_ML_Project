@@ -15,7 +15,6 @@ import canvasToMNIST
 import modelManager
 import matplotlib.pyplot as plt
 
-#import prediction
 import cv2
 import os
 import os.path

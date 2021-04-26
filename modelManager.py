@@ -15,6 +15,8 @@ import numpy as np
 import peripheralUI
 import pandas as pd
 import os
+import threading
+from urllib.error import HTTPError
 
 # Model Linear
 import Model.Model_Linear.model_linear as model_linear
@@ -166,8 +168,7 @@ class CreateModelDialog(QDialog):
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
 
-        self.exec_();
-
+        self.show();
 
     def downloadMNISTData(self):
         self.textBox.append("Downloading dataset...")
@@ -180,22 +181,16 @@ class CreateModelDialog(QDialog):
                             transform=transforms.ToTensor(),
                             download=True)
             self.textBox.append("Dataset already downloaded!")
-        except:
-            datasets.MNIST(root= r.MODULE_DIR,
-                            train=True,
-                            transform=transforms.ToTensor(),
-                            download=True)
-            self.textBox.append("Dataset downloaded!")
-        finally:
             self.progressBar.setValue(50)
+        except HTTPError as err:
+            if err.code == 503:
+                self.textBox.append("HTTP Error 503: Service Unavailable")
 
     def setAndTrainModel(self, model_str):
         self.model_manager.setModelName(model_str);
-        self.trainModel(model_str);
+        self.trainModel(model_str)
 
     def trainModel(self, model_str):
-        self.downloadMNISTData();
-
         self.textBox.append(f"Training {model_str} model...");
         try:
             if (model_str == "Convolutional"):

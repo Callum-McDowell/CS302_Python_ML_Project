@@ -36,7 +36,7 @@ if cuda.is_available():
 
 #====== Datasets ======#
 trainset = datasets.MNIST(
-    root="Dataset/trainset",
+    root="",
     train= True,
     download= True,
     transform= ToTensor()
@@ -49,7 +49,7 @@ loader_trainset = data.DataLoader(
 );
 
 testset = datasets.MNIST(
-    root= "Dataset/testset",
+    root= "",
     train= False,
     download= True,
     transform= ToTensor()

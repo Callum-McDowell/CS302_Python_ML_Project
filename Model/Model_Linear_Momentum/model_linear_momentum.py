@@ -1,5 +1,3 @@
-# Callum McDowell - 8th April 2021
-
 # First custom model.
 # [TODO]: Explain further, add timer, tweak: stacks + loss fn + optimiser
 # https://pytorch.org/tutorials/beginner/basics/intro.html
@@ -77,7 +75,7 @@ class modelTrainingFramework():
     def trainModel(self, progress_bar):
         #====== Datasets ======#
         trainset = datasets.MNIST(
-            root="Dataset/trainset",
+            root="",
             train= True,
             download= True,
             transform= ToTensor()
@@ -90,7 +88,7 @@ class modelTrainingFramework():
         );
 
         testset = datasets.MNIST(
-            root= "Dataset/testset",
+            root= "",
             train= False,
             download= True,
             transform= ToTensor()

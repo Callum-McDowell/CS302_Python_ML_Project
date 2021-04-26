@@ -1,5 +1,3 @@
-# Mazen Darwish
-
 #This file contains the basic functions for predicting canvas input using the models
 
 import torch.nn as nn
