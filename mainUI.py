@@ -36,7 +36,7 @@ class AppMainWindow(QMainWindow):
         # Defines
         WINDOW_SIZE_X = 1000;
         WINDOW_SIZE_Y = 800;
-        WINDOW_TITLE = "CNN Handwriting Recogniser";
+        WINDOW_TITLE = "Handwritten Digit Recognizer";
         self.layout = QVBoxLayout
         # Code
         self.setWindowTitle(WINDOW_TITLE);

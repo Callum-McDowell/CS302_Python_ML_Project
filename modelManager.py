@@ -15,7 +15,6 @@ import numpy as np
 import peripheralUI
 import pandas as pd
 import os
-import threading
 from urllib.error import HTTPError
 
 # Model Linear
