@@ -2,9 +2,6 @@
 # drive.mount('/content/drive/')
 # SAVE_DIR = "/content/drive/My Drive/Colab Notebooks/"
 
-
-# Callum McDowell - 8th April 2021
-
 # First custom model.
 # [TODO]: Explain further, add timer, tweak: stacks + loss fn + optimiser
 # https://pytorch.org/tutorials/beginner/basics/intro.html
