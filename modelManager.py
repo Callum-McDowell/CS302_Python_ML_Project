@@ -13,6 +13,7 @@ from torchvision import datasets, transforms;
 import matplotlib.pyplot as plt
 import numpy as np
 import peripheralUI
+import threadsafe
 
 # Model Linear
 import Model.Model_Linear.model_linear as model_linear
@@ -118,6 +119,7 @@ class ModelDialog(QDialog):
         # manager is the ModelManager() instance that stores the model data
         super().__init__(parent=parent)
         self.model_manager = manager;
+        self.threadpool = threadsafe.QThreadPool();
 
         self.setWindowTitle("Train Model")
         self.setWindowIcon(QIcon(r.ICON_WORKING))
@@ -159,23 +161,29 @@ class ModelDialog(QDialog):
 
         self.exec_();
 
+    def newThreadWorker(self, fn, *args):
+        # Execute function in a different thread
+        worker = threadsafe.Worker(fn,args);
+        self.threadpool.start(worker);
+
+    def pureDownload(self, b_is_train : bool):
+        # Multithread safe
+        datasets.MNIST(
+            root="Dataset/trainset",
+            train= b_is_train,
+            download= True,
+            transform= transforms.ToTensor()
+        )     
 
     def downloadMNISTData(self):
         self.textBox.append("Downloading dataset...")
         self.textBox.repaint()
-
         # Downloading MNIST Dataset (if it doesn't already exist)
         try:
-            datasets.MNIST(root= r.MODULE_DIR,
-                            train=True,
-                            transform=transforms.ToTensor(),
-                            download=True)
+            self.newThreadWorker(self.pureDownload,True)
             self.textBox.append("Dataset already downloaded!")
         except:
-            datasets.MNIST(root= r.MODULE_DIR,
-                            train=True,
-                            transform=transforms.ToTensor(),
-                            download=True)
+            self.newThreadWorker(self.pureDownload,False)
             self.textBox.append("Dataset downloaded!")
         finally:
             self.progressBar.setValue(50)
