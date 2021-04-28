@@ -16,7 +16,8 @@ class Model(nn.Module):
         l3 = 20*20;
         l4 = 18*18;
         l5 = 16*16;
-        l6 = 10;
+        l6 = 10*10;
+        l7 = 10;
 
         self.composite_stack = nn.Sequential(
             # 6 layer stack
@@ -33,7 +34,8 @@ class Model(nn.Module):
             nn.Linear(l4, l5),
             nn.ReLU(),
             nn.Linear(l5, l6),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Linear(l6, l7),
         )
 
     def forward(self, x):
