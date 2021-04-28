@@ -13,6 +13,9 @@ from torchvision import datasets, transforms;
 import matplotlib.pyplot as plt
 import numpy as np
 import peripheralUI
+import pandas as pd
+import os
+from urllib.error import HTTPError
 import threadsafe
 
 # Model Linear
@@ -38,33 +41,41 @@ MODEL_LIST = ["Linear", "Linear Momentum", "Convolutional", "Original"]
 
 class ModelManager():
     def __init__(self):
+        self.model_details = pd.read_json("model_config.json")["models"]
         self.model_name = MODEL_LIST[0];
-        self.model_weights_dir = "Model/";  # must be initialised as is base for QFileDialog
+        self.model_weights_folder = "Model/"+self.model_details[self.model_name];  # must be initialised as is base for QFileDialog
+        for filename in os.listdir(self.model_weights_folder):
+            if filename.endswith("_weights.pkl"):
+                self.model_weights_file = self.model_weights_folder+ "/"+filename;
         self.plot_probabilities = None;
 
     def setModelName(self, name : str):
         if (isinstance(name, str)):
             self.model_name = name;
+            self.model_weights_folder = "Model/"+self.model_details[self.model_name];
+            for filename in os.listdir(self.model_weights_folder):
+                if filename.endswith("_weights.pkl"):
+                    self.model_weights_file = self.model_weights_folder+ "/"+filename;
 
     def changeModelWeightsDir(self, owner):
         # Owner is QWidget to act as parent
-        weights_dir, _ = QFileDialog.getOpenFileName(owner,"Please select model weights", self.model_weights_dir ,"pickle files (*.pkl)")
+        weights_dir, _ = QFileDialog.getOpenFileName(owner,"Please select model weights", self.model_weights_file ,"pickle files (*.pkl)")
         if (len(weights_dir) > 0):
-            self.model_weights_dir = weights_dir;
+            self.model_weights_file = weights_dir;
 
     def predictWithModel(self, image):
         try:
             if (self.model_name == "Convolutional"):
-                pred, self.plot_probabilities = model_conv_prediction.predict(image, self.model_weights_dir);
+                pred, self.plot_probabilities = model_conv_prediction.predict(image, self.model_weights_file);
 
             elif (self.model_name == "Original"):
-                pred, self.plot_probabilities = model_original_prediction.predict(image, self.model_weights_dir);
+                pred, self.plot_probabilities = model_original_prediction.predict(image, self.model_weights_file);
 
             elif (self.model_name == "Linear Momentum"):
-                pred, self.plot_probabilities = model_linear_momentum_prediction.predict(image, self.model_weights_dir);
+                pred, self.plot_probabilities = model_linear_momentum_prediction.predict(image, self.model_weights_file);
                 
             else: # Linear
-                pred, self.plot_probabilities = model_linear_prediction.predict(image, self.model_weights_dir);
+                pred, self.plot_probabilities = model_linear_prediction.predict(image, self.model_weights_file);
                 
             plot = self.createBarPlot();    
             return pred, plot;
@@ -75,7 +86,7 @@ class ModelManager():
 
     def createBarPlot(self):
         plot = self.plot_bar(self.plot_probabilities);
-        plt.show();
+        plt.savefig("probability_graph.png")
 
         mngr = plt.get_current_fig_manager();
         mngr.window.setGeometry(50,100, 600,600);
@@ -100,7 +111,6 @@ class ModelManager():
         plt.ylabel('Probability', fontsize=20)
         plt.xticks(index, fontsize=8, rotation=30)
         plt.title('Model Prediction Probability')
-        plt.show()
         return plot;
 
     def generateErrorBox(self, title="Error", message="Error", detail="None"):
@@ -159,7 +169,7 @@ class ModelDialog(QDialog):
         self.layout.addWidget(self.cancelButton)
         self.setLayout(self.layout)
 
-        self.exec_();
+        self.show();
 
     def newThreadWorker(self, fn, *args):
         # Execute function in a different thread
@@ -182,19 +192,19 @@ class ModelDialog(QDialog):
         try:
             self.newThreadWorker(self.pureDownload,True)
             self.textBox.append("Dataset already downloaded!")
+            self.progressBar.setValue(50)
+        except HTTPError as err:
+            if err.code == 503:
+                self.textBox.append("HTTP Error 503: Service Unavailable")
         except:
             self.newThreadWorker(self.pureDownload,False)
             self.textBox.append("Dataset downloaded!")
-        finally:
-            self.progressBar.setValue(50)
 
     def setAndTrainModel(self, model_str):
         self.model_manager.setModelName(model_str);
-        self.trainModel(model_str);
+        self.trainModel(model_str)
 
     def trainModel(self, model_str):
-        self.downloadMNISTData();
-
         self.textBox.append(f"Training {model_str} model...");
         try:
             if (model_str == "Convolutional"):
@@ -219,3 +229,17 @@ class ModelDialog(QDialog):
             print(e);
         else:
             self.textBox.append(f"Training Done\nAccuracy: {self.accuracy :>.2f}%");
+
+    def newThreadWorker(self, fn, *args):
+        # Execute function in a different thread
+        worker = threadsafe.Worker(fn,args);
+        self.threadpool.start(worker);
+
+    def pureDownload(self, b_is_train : bool):
+        # Multithread safe
+        datasets.MNIST(
+            root="",
+            train= b_is_train,
+            download= True,
+            transform= transforms.ToTensor()
+        )     

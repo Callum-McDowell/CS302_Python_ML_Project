@@ -13,8 +13,8 @@ import peripheralUI;
 import sys
 import canvasToMNIST
 import ModelManager
+import matplotlib.pyplot as plt
 
-#import prediction
 import cv2
 import os
 import os.path
@@ -31,21 +31,18 @@ class Canvas(QWidget):
     def __init__(self):
         super().__init__();
 
-     #Setting title
-        self.setWindowTitle("Please write a number")
-
-        #self.setFixedSize(400, 400)
-        self.resize(400, 400)
+        self.setFixedSize(600, 800)
   
         #Creating image object
         self.image = QImage(self.size(), QImage.Format_RGB32)
         self.image.fill(Qt.white)
 
+
         #drawing flag
         self.drawing = False
         self.drawing_allowed = False;
-        #brush size
-        self.brushSize = 10
+        #brush size (ideal brush size to maximize image quality after processing)
+        self.brushSize = 20
         #color
         self.brushColor = Qt.black
   
@@ -100,7 +97,6 @@ class Canvas(QWidget):
           
         canvasPainter.drawImage(self.rect(), self.image, self.image.rect())
   
-  
     #Method for clearing everything on canvas
     def clear(self):
         # make the whole canvas white
@@ -122,6 +118,7 @@ class Canvas(QWidget):
         img = canvasToMNIST.cropInput(img)
         img = canvasToMNIST.convertToMNIST(img)
         return img
+
 
 #====== Main Content ======#
 class AppMainContent(QWidget):
@@ -205,6 +202,8 @@ class AppMainContent(QWidget):
         self.toggleGraphButton.hide();
         self.toggleGraphButton.clicked.connect(self.togglePlot);
         self.toolsGroupLayout.addWidget(self.toggleGraphButton);
+        self.plotPixmap = QLabel(self)
+        self.toolsGroupLayout.addWidget(self.plotPixmap);
 
         self.vbox.addStretch(5);
 
@@ -231,6 +230,8 @@ class AppMainContent(QWidget):
             pred, self.plot = self.model_manager.predictWithModel(img);
             self.setPredLabel(str(pred));
             self.toggleGraphButton.show();
+            self.plotPixmap.setPixmap(QPixmap("probability_graph.png"))
+            os.remove("probability_graph.png")
         except:
             # None is returned if predict() fails.
             self.changeModelWeights();
@@ -247,10 +248,10 @@ class AppMainContent(QWidget):
 
     #Toggle probability graph when the "Hide/Show graph" button is clicked
     def togglePlot(self):
-        if (len(plt.get_fignums()) > 0):
-            plt.close()
+        if (self.plotPixmap.isVisible()):
+            self.plotPixmap.hide()
         else:
-            self.model_manager.createBarPlot();
+            self.plotPixmap.show();
 
     def changeModelWeights(self):
         self.model_manager.changeModelWeightsDir(self);

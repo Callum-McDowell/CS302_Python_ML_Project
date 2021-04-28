@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import *;
 from PyQt5.QtGui import QIcon;
 #from PyQt5.QtCore import Qt;
 
+import time
 import resources as r;
 import maincUI as c;
 import peripheralUI;
@@ -33,9 +34,9 @@ class AppMainWindow(QMainWindow):
 
     def initUI(self):
         # Defines
-        WINDOW_SIZE_X = 600;
-        WINDOW_SIZE_Y = 400;
-        WINDOW_TITLE = "CNN Handwriting Recogniser";
+        WINDOW_SIZE_X = 1000;
+        WINDOW_SIZE_Y = 800;
+        WINDOW_TITLE = "Handwritten Digit Recognizer";
         self.layout = QVBoxLayout
         # Code
         self.setWindowTitle(WINDOW_TITLE);

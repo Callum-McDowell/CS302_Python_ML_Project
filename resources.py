@@ -1,5 +1,3 @@
-# Callum - 2nd April 2021
-
 #====== resources.py ======#
 # A header file for consolidating and simplifying access of
 # static resources (e.g. icons, graphics).

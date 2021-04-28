@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 import cv2
 import os
 
-
 #====== Code ======#
 
 # PopupBox()
@@ -81,9 +80,9 @@ class ErrorBox(QMessageBox):
         self.exec_();
         self.show();
 
+
 # Image Viewer Dialogue
 # View images in a dataset one-by-one. Change image with 'next' and 'previous'.
-
 class ViewImagesDlg(QDialog):
     def __init__(self, datasetType):
         super().__init__()
