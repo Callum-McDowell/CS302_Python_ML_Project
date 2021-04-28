@@ -1,4 +1,4 @@
-#====== modelManager.py ======#
+#====== ModelManager.py ======#
 # Trains the models and selects which one to use.
 # All model and prediction requests must be sent to
 # this module.
@@ -35,11 +35,11 @@ MODEL_LIST = ["Linear", "Linear Momentum", "Convolutional", "Original"]
 # Note: default to Linear
 
 
-# modelManager
+# ModelManager
 # Interface for requests to the model
 # Use it to select the current model, train
 
-class modelManager():
+class ModelManager():
     def __init__(self):
         self.model_details = pd.read_json("model_config.json")["models"]
         self.model_name = MODEL_LIST[0];
@@ -123,10 +123,10 @@ class modelManager():
 # Allows the user to download the MNIST dataset and train the model.
 # Shows progress downloading and training with a progress bar.
 
-class CreateModelDialog(QDialog):
+class ModelDialog(QDialog):
     def __init__(self, parent=None, manager=None):
         # parent is the QWidget that will own the dialog
-        # manager is the modelManager() instance that stores the model data
+        # manager is the ModelManager() instance that stores the model data
         super().__init__(parent=parent)
         self.model_manager = manager;
         self.threadpool = threadsafe.QThreadPool();
