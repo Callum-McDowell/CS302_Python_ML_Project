@@ -12,6 +12,9 @@ RESOURCES_DIR = MODULE_DIR + "\\resources\\";
 # https://doc.qt.io/qt-5/resources.html
 
 
+#====== Paths ======#
+MODEL_CONFIG_DIR = MODULE_DIR + "\\Model\\" + "model_config.json";
+
 #====== Icons ======#
 ICON_WINDOW = RESOURCES_DIR + "icon_robot.png";
 ICON_EXIT = RESOURCES_DIR + "icon_exit.svg";

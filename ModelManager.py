@@ -41,9 +41,10 @@ MODEL_LIST = ["Linear", "Linear Momentum", "Convolutional", "Original"]
 
 class ModelManager():
     def __init__(self):
-        self.model_details = pd.read_json("model_config.json")["models"]
+        self.model_details = pd.read_json(r.MODEL_CONFIG_DIR)["models"]
         self.model_name = MODEL_LIST[0];
         self.model_weights_folder = "Model/"+self.model_details[self.model_name];  # must be initialised as is base for QFileDialog
+        
         for filename in os.listdir(self.model_weights_folder):
             if filename.endswith("_weights.pkl"):
                 self.model_weights_file = self.model_weights_folder+ "/"+filename;

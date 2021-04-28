@@ -12,5 +12,6 @@ Our required libraries:
 • Numpy (v1.19.5)
 • TorchVision (v0.9.0)
 • Urllib3 (v1.26.4)
+• Panda (v1.2.4)
 
 Dataset can vary, but we are using the MNIST Dataset.
