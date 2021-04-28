@@ -225,7 +225,7 @@ class CreateModelDialog(QDialog):
     def pureDownload(self, b_is_train : bool):
         # Multithread safe
         datasets.MNIST(
-            root="Dataset/trainset",
+            root="",
             train= b_is_train,
             download= True,
             transform= transforms.ToTensor()

@@ -16,11 +16,6 @@ import matplotlib.pyplot as plt
 import cv2
 import os
 
-# import Model.model_training as model_linear_training
-# #import Model.model1 as model_temp_training
-# MODEL_LIST = ["Linear", "Convolutional", "Complex"]
-
-
 #====== Code ======#
 
 # PopupBox()
@@ -231,7 +226,9 @@ class ViewImagesDlg(QDialog):
         self.nextButton.clicked.connect(self.showNextImg);
         self.btnbox.addWidget(self.nextButton);
 
+        # Window Layout
         self.setWindowTitle("Dataset Viewer")
+        self.setWindowIcon(QIcon(r.ICON_FIND));
         self.setGeometry(200, 200, (120 + 28*5* self.GRID_X), (120 + 28*5*5));
 
     def updateProgressLabel(self):
@@ -243,9 +240,9 @@ class ViewImagesDlg(QDialog):
         
         # Add images to the grid:
         for x, y in positions:
-            #pass;
-            self.gallery.addWidget(self.generateImage(index), y, x);
-            index += 1;
+            if index < self.num_images:
+                self.gallery.addWidget(self.generateImage(index), y, x);
+                index += 1;
 
         return index;
 
