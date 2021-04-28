@@ -80,6 +80,9 @@ class ErrorBox(QMessageBox):
         self.exec_();
         self.show();
 
+
+# Image Viewer Dialogue
+# View images in a dataset one-by-one. Change image with 'next' and 'previous'.
 class ViewImagesDlg(QDialog):
     def __init__(self, datasetType):
         super().__init__()
@@ -94,6 +97,10 @@ class ViewImagesDlg(QDialog):
         #Decompressing the .gz file and appending its contents to a list
         self.imgList = self.generateImgList()
         self.imageIndex = 0
+
+        # Window Layout
+        self.setWindowTitle("Dataset Viewer")
+        self.setWindowIcon(QIcon(r.ICON_FIND));
 
         # Layout
         self.vbox = QVBoxLayout();
@@ -133,9 +140,6 @@ class ViewImagesDlg(QDialog):
         self.nextButton.clicked.connect(self.showNextImg);
         self.btnbox.addWidget(self.nextButton);
 
-        # Window Layout
-        self.setWindowTitle("Dataset Viewer")
-        self.setWindowIcon(QIcon(r.ICON_FIND));
         self.setGeometry(200, 200, (120 + 28*5* self.GRID_X), (120 + 28*5*5));
 
     def updateProgressLabel(self):

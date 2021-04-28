@@ -37,4 +37,4 @@ class Worker(QRunnable):
         '''
         Initialise the runner function with passed args, kwargs.
         '''
-        self.fn(*self.args, **self.kwargs) 
+        self.fn(*self.args, **self.kwargs)

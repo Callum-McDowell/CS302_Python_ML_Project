@@ -171,10 +171,23 @@ class ModelDialog(QDialog):
 
         self.show();
 
+    def newThreadWorker(self, fn, *args):
+        # Execute function in a different thread
+        worker = threadsafe.Worker(fn,args);
+        self.threadpool.start(worker);
+
+    def pureDownload(self, b_is_train : bool):
+        # Multithread safe
+        datasets.MNIST(
+            root="Dataset/trainset",
+            train= b_is_train,
+            download= True,
+            transform= transforms.ToTensor()
+        )     
+
     def downloadMNISTData(self):
         self.textBox.append("Downloading dataset...")
         self.textBox.repaint()
-
         # Downloading MNIST Dataset (if it doesn't already exist)
         try:
             self.newThreadWorker(self.pureDownload,True)
