@@ -16,6 +16,7 @@ import peripheralUI
 import pandas as pd
 import os
 from urllib.error import HTTPError
+import threadsafe
 
 # Model Linear
 import Model.Model_Linear.model_linear as model_linear
@@ -128,6 +129,7 @@ class CreateModelDialog(QDialog):
         # manager is the modelManager() instance that stores the model data
         super().__init__(parent=parent)
         self.model_manager = manager;
+        self.threadpool = threadsafe.QThreadPool();
 
         self.setWindowTitle("Train Model")
         self.setWindowIcon(QIcon(r.ICON_WORKING))
@@ -175,15 +177,15 @@ class CreateModelDialog(QDialog):
 
         # Downloading MNIST Dataset (if it doesn't already exist)
         try:
-            datasets.MNIST(root= r.MODULE_DIR,
-                            train=True,
-                            transform=transforms.ToTensor(),
-                            download=True)
+            self.newThreadWorker(self.pureDownload,True)
             self.textBox.append("Dataset already downloaded!")
             self.progressBar.setValue(50)
         except HTTPError as err:
             if err.code == 503:
                 self.textBox.append("HTTP Error 503: Service Unavailable")
+        except:
+            self.newThreadWorker(self.pureDownload,False)
+            self.textBox.append("Dataset downloaded!")
 
     def setAndTrainModel(self, model_str):
         self.model_manager.setModelName(model_str);
@@ -214,3 +216,17 @@ class CreateModelDialog(QDialog):
             print(e);
         else:
             self.textBox.append(f"Training Done\nAccuracy: {self.accuracy :>.2f}%");
+
+    def newThreadWorker(self, fn, *args):
+        # Execute function in a different thread
+        worker = threadsafe.Worker(fn,args);
+        self.threadpool.start(worker);
+
+    def pureDownload(self, b_is_train : bool):
+        # Multithread safe
+        datasets.MNIST(
+            root="Dataset/trainset",
+            train= b_is_train,
+            download= True,
+            transform= transforms.ToTensor()
+        )     
