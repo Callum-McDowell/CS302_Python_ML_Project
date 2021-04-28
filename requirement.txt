@@ -3,7 +3,7 @@ Our required libraries:
 • Python 3.7 or above.
 • PyQt5 Python GUI (v5.15.4)
 • PyTorch for DNN (v1.8)
-• mkl-service (v2.3.0)
+•mkl-service (v2.3.0)
 • scikit-image (v0.18.1)
 •	matplotlib (v3.4.1)
 •	Pillow (v8.1.2)
