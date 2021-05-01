@@ -1,6 +1,15 @@
+# Mazen Darwish, Callum McDowell
+# March/April 2021
+
 #====== maincUI.py ======#
-# The core content and 'central widget' of our app.
+# CONTROLLER + VIEW
+
+# IN: Owning QMainWindow.
+# OUT: Main GUI content and commands (incl. canvas, requesting prediction, etc).
 #
+# The core content and 'central widget' of our app.
+# Contains the canvas, canvas tools, model selection, model weights selection,
+# prediction button, prediction result plot, and other minor features.
 
 
 #====== Libraries ======#

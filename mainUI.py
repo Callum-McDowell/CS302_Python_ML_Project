@@ -1,4 +1,12 @@
+# Callum McDowell, Mazen Darwish
+# March/April 2021
+
 #====== mainUI.py ======#
+# VIEW + CONTROLLER
+
+# IN: Void.
+# OUT: CentralWidget, and various utility commands for our app
+#
 # The MainWindow of our app.
 # The MainWindow provides a framework for the UI, with our QToolBar,
 # QMenuBar, and QStatusBar implemented here. Most actions and
@@ -12,7 +20,6 @@
 import sys;
 from PyQt5.QtWidgets import *;
 from PyQt5.QtGui import QIcon;
-#from PyQt5.QtCore import Qt;
 
 import time
 import resources as r;

@@ -1,5 +1,14 @@
-# This file contains all the functions necessary to process the canvas input
-# Canvas input needs to be processed and made to be similar to the training data for maximum accuracy
+# Mazen Darwish
+# March/April 2021
+
+#====== peripheralUI.py ======#
+# HELPER
+
+# IN: Image from the canvas of an arbitrary size. Monocolour with white as the background.
+# OUT: MNIST format image of 28x28 size, incl. 4px padding, and black as background.
+#
+# This file contains all the functions necessary to process the canvas input.
+# Canvas input needs to be processed and made to be similar to the training data for maximum accuracy.
 
 import numpy as np
 import cv2

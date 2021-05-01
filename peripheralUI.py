@@ -1,7 +1,15 @@
+# Callum McDowell, Mazen Darwish
+# March/April 2021
+
 #====== peripheralUI.py ======#
+# VIEW + HELPER
+
 # Common UI features that may be used in other modules,
 # but are not standalone. Typically be populated with
 # content when initialised. e.g. popup info boxes.
+#
+# Includes a template PopupBox() and ErrorBox(), in
+# addition to the Image Viewer Dialog.
 
 #====== Libraries ======#
 import resources as r

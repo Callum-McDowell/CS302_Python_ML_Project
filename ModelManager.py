@@ -1,4 +1,12 @@
+# Callum McDowell, Mazen Darwish
+# April 2021
+
 #====== ModelManager.py ======#
+# CONTROLLER
+
+# IN: Requests to train and use models.
+# OUT: Prediction results, GUI notifications.
+#
 # Trains the models and selects which one to use.
 # All model and prediction requests must be sent to
 # this module.
@@ -31,8 +39,8 @@ import Model.Model_Conv.model_conv_prediction as model_conv_prediction
 import Model.Model_Original.model_original as model_original
 import Model.Model_Original.model_original_prediction as model_original_prediction
 # ...
-MODEL_LIST = ["Linear", "Linear Momentum", "Convolutional", "Original"]
-# Note: default to Linear
+MODEL_LIST = ["Linear Momentum", "Linear", "Convolutional", "Original"]
+# Note: default to Linear Momentum
 
 
 # ModelManager

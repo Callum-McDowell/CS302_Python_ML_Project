@@ -1,4 +1,5 @@
 Our required libraries:
+(versions subject to flexibility; last tested versions)
 
 • Python 3.7 or above.
 • PyQt5 Python GUI (v5.15.4)

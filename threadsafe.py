@@ -1,8 +1,12 @@
-#====== ModelManager.py ======#
+# Callum McDowell
+# April 2021
+
+#====== threadsafe.py ======#
 # HELPER
 
-# Create a flexible QRunnable child class that can be used to thread
-# safe nearly any process.
+# Create a flexible QRunnable child class that can be used to thread-
+# safe most methods. Works best for methods that do not require mid-execution
+# communication (e.g. updating argument objects).
 #
 # Code adapted from:
 # https://www.mfitzp.com/tutorials/multithreading-pyqt-applications-qthreadpool/#improved-qrunnables

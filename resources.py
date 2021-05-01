@@ -1,4 +1,6 @@
 #====== resources.py ======#
+# HELPER
+
 # A header file for consolidating and simplifying access of
 # static resources (e.g. icons, graphics).
 # Constants are directory paths and names.
