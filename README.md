@@ -8,11 +8,12 @@ In the app users can download datasets and train a selection of models, and then
 Our research explores linear regression neural networks (NN) and convolutional neural networks (CNN).
 We used the MNIST handwritten digits dataset to train and test our models.
 
-[Main UI](./resources/Media/CentralWidget.png)
+![Main UI](./resources/Media/CentralWidget.png)
 
-## Version
+## Versions
 ### v1.0
 Released May 1 2021
+
 The first working version of our app. All main features are completed, including:
 - Populated main window toolbar and menus
 - The GUI has a drawable canvas, and model selection and canvas submission options
@@ -23,4 +24,4 @@ The first working version of our app. All main features are completed, including
 - ... and a few small QoL additions.
 
 
-### Check the [assignment project brief](CS302_2021_Project_Brief.pdf) for more detail.
+### Check out the [assignment project brief](CS302_2021_Project_Brief.pdf) for more detail.
