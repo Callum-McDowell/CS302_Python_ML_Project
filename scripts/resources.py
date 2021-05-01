@@ -16,6 +16,9 @@ RESOURCES_DIR = MODULE_DIR + "\\resources\\";
 
 #====== Paths ======#
 MODEL_CONFIG_DIR = MODULE_DIR + "\\Model\\" + "model_config.json";
+DATASET_DIR = MODULE_DIR + "\\Dataset\\"
+TRAINSET_DIR = DATASET_DIR + "trainset\\MNIST\\"
+TESTSET_DIR = DATASET_DIR + "testset\\MNIST\\"
 
 #====== Icons ======#
 ICON_WINDOW = RESOURCES_DIR + "icon_robot.png";

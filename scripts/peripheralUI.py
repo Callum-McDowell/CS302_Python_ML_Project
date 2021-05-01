@@ -96,10 +96,10 @@ class ViewImagesDlg(QDialog):
         super().__init__()
         #Determining which dataset to view
         if datasetType == "training":
-            self.filePath = r.MODULE_DIR + '/MNIST/raw/train-images-idx3-ubyte.gz'
+            self.filePath = r.TRAINSET_DIR + 'raw/train-images-idx3-ubyte.gz'
             self.num_images = 60000
         else:
-            self.filePath = r.MODULE_DIR + '/MNIST/raw/t10k-images-idx3-ubyte.gz'
+            self.filePath = r.TESTSET_DIR + 'testset/MNIST/raw/t10k-images-idx3-ubyte.gz'
             self.num_images = 10000
 
         #Decompressing the .gz file and appending its contents to a list

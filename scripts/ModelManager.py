@@ -190,9 +190,9 @@ class ModelDialog(QDialog):
         # Multithread safe
         if (isinstance(b_is_train, bool)):
             if (b_is_train == True):
-                root_dir = r.MODULE_DIR + "/Dataset/trainset"
+                root_dir = r.DATASET_DIR + "trainset"
             else:
-                root_dir = r.MODULE_DIR + "/Dataset/testset"
+                root_dir = r.DATASET_DIR + "testset"
 
             datasets.MNIST(
                 root=root_dir,
@@ -250,12 +250,3 @@ class ModelDialog(QDialog):
         # Execute function in a different thread
         worker = threadsafe.Worker(fn,args);
         self.threadpool.start(worker);
-
-    def pureDownload(self, b_is_train : bool):
-        # Multithread safe
-        datasets.MNIST(
-            root="",
-            train= b_is_train,
-            download= True,
-            transform= transforms.ToTensor()
-        )     

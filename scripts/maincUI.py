@@ -224,7 +224,7 @@ class AppMainContent(QWidget):
         self.modelLabel.setText("Model: " + self.model_manager.model_name);
 
     def setPredLabel(self, text):
-        self.predLabel.setText("Predicted value is: <b>" + text + "</b>");
+        self.predLabel.setText('Predicted value is: <b><span style="font-size:18px";font="monospace">' + text + "</b></span>");
 
     def submit(self):
         #Exception would be executed if no input is found

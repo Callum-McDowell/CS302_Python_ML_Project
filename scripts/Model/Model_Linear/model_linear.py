@@ -74,7 +74,7 @@ class modelTrainingFramework():
     def trainModel(self, progress_bar):
         #====== Datasets ======#
         trainset = datasets.MNIST(
-            root="",
+            root=r.DATASET_DIR + "trainset",
             train= True,
             download= True,
             transform= ToTensor()
@@ -87,7 +87,7 @@ class modelTrainingFramework():
         );
 
         testset = datasets.MNIST(
-            root= "",
+            root=r.DATASET_DIR + "testset",
             train= False,
             download= True,
             transform= ToTensor()
