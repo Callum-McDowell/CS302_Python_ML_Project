@@ -25,6 +25,7 @@ import pandas as pd
 import os
 from urllib.error import HTTPError
 import threadsafe
+import resources as r
 
 # Model Linear
 import Model.Model_Linear.model_linear as model_linear
@@ -51,7 +52,7 @@ class ModelManager():
     def __init__(self):
         self.model_details = pd.read_json(r.MODEL_CONFIG_DIR)["models"]
         self.model_name = MODEL_LIST[0];
-        self.model_weights_folder = "Model/"+self.model_details[self.model_name];  # must be initialised as is base for QFileDialog
+        self.model_weights_folder =  r.MODULE_DIR + "/Model/"+self.model_details[self.model_name];  # must be initialised as is base for QFileDialog
         
         for filename in os.listdir(self.model_weights_folder):
             if filename.endswith("_weights.pkl"):
@@ -61,7 +62,7 @@ class ModelManager():
     def setModelName(self, name : str):
         if (isinstance(name, str)):
             self.model_name = name;
-            self.model_weights_folder = "Model/"+self.model_details[self.model_name];
+            self.model_weights_folder = r.MODULE_DIR + "/Model/"+self.model_details[self.model_name];
             for filename in os.listdir(self.model_weights_folder):
                 if filename.endswith("_weights.pkl"):
                     self.model_weights_file = self.model_weights_folder+ "/"+filename;
@@ -187,12 +188,18 @@ class ModelDialog(QDialog):
 
     def pureDownload(self, b_is_train : bool):
         # Multithread safe
-        datasets.MNIST(
-            root="Dataset/trainset",
-            train= b_is_train,
-            download= True,
-            transform= transforms.ToTensor()
-        )     
+        if (isinstance(b_is_train, bool)):
+            if (b_is_train == True):
+                root_dir = r.MODULE_DIR + "/Dataset/trainset"
+            else:
+                root_dir = r.MODULE_DIR + "/Dataset/testset"
+
+            datasets.MNIST(
+                root=root_dir,
+                train= b_is_train,
+                download= True,
+                transform= transforms.ToTensor()
+            )     
 
     def downloadMNISTData(self):
         self.textBox.append("Downloading dataset...")
