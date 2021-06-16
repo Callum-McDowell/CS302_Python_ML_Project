@@ -1,3 +1,5 @@
+![Banner Image](./scripts/resources/Media/CS302_ML_Finished_Banner.png)
+
 # COMPSYS 302 S1 2021 – Machine Learning Handwritten Digit Recogniser
 Mazen Darwish, Callum McDowell
 
